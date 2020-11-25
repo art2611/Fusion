@@ -28,8 +28,8 @@ def multi_process() :
     num_of_same_id_in_batch = 4 # Number of same identity in a batch
     workers = 4
     lr = 0.001
-    checkpoint_path = 'save_model/'
-    suffix = f'RegDB_person({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    checkpoint_path = '../save_model/'
+    suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
     # Data info  :
     data_path = '../Datasets/RegDB/'
     #log_path = args.log_path + 'regdb_log/'
