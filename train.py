@@ -154,7 +154,7 @@ def multi_process() :
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
-            if batch_idx % 2 == 0:
+            if batch_idx % 50 == 0:
                 print(f'Epoch: [{epoch}][{batch_idx}/{len(trainloader)}] '
                       f'Time: {batch_time.val:.3f} ({batch_time.avg:.3f}) '
                       f'lr:{current_lr:.3f} '
