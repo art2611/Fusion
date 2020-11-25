@@ -10,6 +10,7 @@ from evaluation import eval_regdb
 from torchvision import transforms
 import torch.utils.data
 from multiprocessing import freeze_support
+from tensorboardX import SummaryWriter
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -40,7 +41,7 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-
+writer = SummaryWriter("runs/Fusion2test")
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
     print('Extracting Gallery Feature...')
@@ -167,6 +168,9 @@ def multi_process() :
             cmc[0], cmc[4], cmc[9], cmc[19], mAP, mINP))
     print('POOL:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
     cmc_pool[0], cmc_pool[4], cmc_pool[9], cmc_pool[19], mAP_pool, mINP_pool))
+
+    for k in range(len(cmc)):
+        writer.add_scalar('cmc curve', cmc[k]*100, k + 1)
 
 if __name__ == '__main__':
     freeze_support()
