@@ -18,7 +18,7 @@ from evaluation import eval_regdb
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Fusion1middle")
+    writer = SummaryWriter("runs/Fusion1early")
 
     # Init variables :
     img_w = 144

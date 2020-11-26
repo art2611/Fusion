@@ -40,7 +40,7 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-writer = SummaryWriter("runs/Fusion1middleTest")
+writer = SummaryWriter("runs/Fusion1earlyTest")
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
     print('Extracting Gallery Feature...')
