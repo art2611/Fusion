@@ -167,7 +167,7 @@ def multi_process() :
         # writer.add_scalar('id_loss', id_loss.avg, epoch)
         # writer.add_scalar('tri_loss', tri_loss.avg, epoch)
         # writer.add_scalar('lr', current_lr, epoch)
-        writer.add_scalar('Accuracy', 100. * correct / total, epoch)
+        writer.add_scalar('Accuracy training', 100. * correct / total, epoch)
 
     def test(epoch):
 
@@ -188,7 +188,7 @@ def multi_process() :
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
 
 
-        writer.add_scalar('mAP', mAP, epoch)
+        writer.add_scalar('Accuracy validation', mAP, epoch)
 
         return cmc, mAP, mINP, cmc_att, mAP_att, mINP_att
 
