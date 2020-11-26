@@ -69,7 +69,7 @@ def multi_process() :
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0)
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all")
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
 
     elif dataset == 'regdb':
