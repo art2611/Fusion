@@ -28,7 +28,7 @@ batch_num_identities = 8  # 8 different identities in a batch
 num_of_same_id_in_batch = 4  # Number of same identity in a batch
 workers = 4
 lr = 0.001
-checkpoint_path = 'save_model/'
+checkpoint_path = '../save_model/'
 suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 #
 test_mode = [2, 1]  # visible to thermal
