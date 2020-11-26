@@ -35,10 +35,6 @@ class visible_module(nn.Module):
         x = self.visible.bn1(x)
         x = self.visible.relu(x)
         x = self.visible.maxpool(x)
-        x = self.visible.layer1(x)
-        x = self.visible.layer2(x)
-        x = self.visible.layer3(x)
-        x = self.visible.layer4(x)
         return x
 
 class thermal_module(nn.Module):
@@ -54,10 +50,6 @@ class thermal_module(nn.Module):
         x = self.thermal.bn1(x)
         x = self.thermal.relu(x)
         x = self.thermal.maxpool(x)
-        x = self.thermal.layer1(x)
-        x = self.thermal.layer2(x)
-        x = self.thermal.layer3(x)
-        x = self.thermal.layer4(x)
         return x
 
 class shared_resnet(nn.Module):
@@ -71,6 +63,8 @@ class shared_resnet(nn.Module):
         self.base = model_base
 
     def forward(self, x):
+        x = self.base.layer1(x)
+        x = self.base.layer2(x)
         x = self.base.layer3(x)
         x = self.base.layer4(x)
         return x
@@ -85,9 +79,6 @@ class Network(nn.Module):
 
         pool_dim = 2048
 
-
-
-
         # self.bottleneck.apply(weights_init_kaiming)
         # self.classifier.apply(weights_init_classifier)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
@@ -98,9 +89,9 @@ class Network(nn.Module):
 
     def forward(self, x1, x2, modal=0):
         if modal == 0:
-            x1 = self.visible_module(x1)    #torch.Size([32, 2048, 18, 9])
-            x2 = self.thermal_module(x2)    #torch.Size([32, 2048, 18, 9])
-            x = torch.cat((x1, x2), 0)      #torch.Size([64, 2048, 18, 9])
+            x1 = self.visible_module(x1)    # Early : torch.Size([32, 2048, 18, 9])  Middle : torch.Size([32, 2048, 9, 5])  End : torch.Size([32, 2048, 9, 5])
+            x2 = self.thermal_module(x2)
+            x = torch.cat((x1, x2), 0)
             print(x1.shape)
             print(x2.shape)
             print(x.shape)
@@ -109,7 +100,7 @@ class Network(nn.Module):
         elif modal == 2:
             x = self.thermal_module(x2)
 
-        # x = self.shared_resnet(x)
+        x = self.shared_resnet(x)
 
         x_pool = self.avgpool(x)
         x_pool = x_pool.view(x_pool.size(0), x_pool.size(1))
