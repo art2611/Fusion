@@ -37,6 +37,8 @@ class visible_module(nn.Module):
         x = self.visible.maxpool(x)
         x = self.visible.layer1(x)
         x = self.visible.layer2(x)
+        x = self.visible.layer3(x)
+        x = self.visible.layer4(x)
         return x
 
 class thermal_module(nn.Module):
@@ -54,6 +56,8 @@ class thermal_module(nn.Module):
         x = self.thermal.maxpool(x)
         x = self.thermal.layer1(x)
         x = self.thermal.layer2(x)
+        x = self.thermal.layer3(x)
+        x = self.thermal.layer4(x)
         return x
 
 class shared_resnet(nn.Module):
@@ -97,15 +101,15 @@ class Network(nn.Module):
             x1 = self.visible_module(x1)    #torch.Size([32, 2048, 18, 9])
             x2 = self.thermal_module(x2)    #torch.Size([32, 2048, 18, 9])
             x = torch.cat((x1, x2), 0)      #torch.Size([64, 2048, 18, 9])
-            # print(x1.shape)
-            # print(x2.shape)
-            # print(x.shape)
+            print(x1.shape)
+            print(x2.shape)
+            print(x.shape)
         elif modal == 1:
             x = self.visible_module(x1)
         elif modal == 2:
             x = self.thermal_module(x2)
 
-        x = self.shared_resnet(x)
+        # x = self.shared_resnet(x)
 
         x_pool = self.avgpool(x)
         x_pool = x_pool.view(x_pool.size(0), x_pool.size(1))
@@ -117,6 +121,6 @@ class Network(nn.Module):
         else:
             return self.l2norm(x_pool), self.l2norm(feat)
 
-# print(Network(250, arch='resnet50'))
+model = Network(250, arch='resnet50')
 #print(resneut50(pretrained= True))
 # print(thermal_module())
