@@ -89,12 +89,9 @@ class Network(nn.Module):
 
     def forward(self, x1, x2, modal=0):
         if modal == 0:
-            x1 = self.visible_module(x1)    # Early : torch.Size([32, 2048, 18, 9])  Middle : torch.Size([32, 2048, 9, 5])  End : torch.Size([32, 2048, 9, 5])
+            x1 = self.visible_module(x1)    # Early : torch.Size([32, 64, 72, 36])  Middle : torch.Size([32, 2048, 9, 5])  End : torch.Size([32, 2048, 9, 5])
             x2 = self.thermal_module(x2)
             x = torch.cat((x1, x2), 0)
-            print(x1.shape)
-            print(x2.shape)
-            print(x.shape)
         elif modal == 1:
             x = self.visible_module(x1)
         elif modal == 2:
