@@ -14,7 +14,7 @@ from tensorboardX import SummaryWriter
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-nclass = 206
+
 # net = Network(class_num=nclass).to(device)
 
 pool_dim = 2048
@@ -43,9 +43,11 @@ writer = SummaryWriter("runs/Fusion1earlyTest")
 
 dataset = 'sysu'
 if dataset == 'sysu':
+    nclass = 395
     data_path = '../Datasets/SYSU/'
     suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 elif dataset == 'regdb':
+    nclass = 206
     data_path = '../Datasets/RegDB/'
     suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 def extract_gall_feat(gall_loader, ngall, net):
