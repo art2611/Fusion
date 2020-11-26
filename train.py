@@ -4,7 +4,7 @@ import torch.utils.data
 import torch.nn as nn
 from torch.autograd import Variable
 import time
-from data_loader import RegDBData, GenIdx, process_test_regdb, TestData
+from data_loader import *
 from torchvision import transforms
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,11 +14,11 @@ from tensorboardX import SummaryWriter
 from model import Network
 from multiprocessing import freeze_support
 from test import extract_gall_feat, extract_query_feat
-from evaluation import eval_regdb
+from evaluation import *
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Fusion1early")
+    writer = SummaryWriter("runs/Layer1Fusion_SYSU")
 
     # Init variables :
     img_w = 144
@@ -29,10 +29,11 @@ def multi_process() :
     workers = 4
     lr = 0.001
     checkpoint_path = '../save_model/'
-    suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+
+
     # Data info  :
-    data_path = '../Datasets/RegDB/'
-    #log_path = args.log_path + 'regdb_log/'
+
+    #  log_path = args.log_path + 'regdb_log/'
     test_mode = [2, 1]  # visible to thermal
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     transform_train = transforms.Compose([
@@ -51,17 +52,37 @@ def multi_process() :
     ])
 
     Timer1 = time.time()
-    ######################################### TRAIN SET
-    trainset = RegDBData(data_path, trial = 1, transform=transform_train)
+    dataset = 'sysu'
+    if dataset == 'sysu':
+        data_path = '../Datasets/SYSU/'
+        suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    elif dataset == 'regdb':
+        data_path = '../Datasets/RegDB/'
+        suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 
-    # generate the idx of each person identity for instance, identity 10 have the index 100 to 109
-    # It is a list of list color_pos[10] = [100, ..., 109]
-    color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
+    ######################################### TRAIN SET
+
+    if dataset == 'sysu':
+        # training set
+        trainset = SYSUData(data_path, transform=transform_train)
+        # generate the idx of each person identity
+        color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
+
+        # testing set
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
+
+    elif dataset == 'regdb':
+        trainset = RegDBData(data_path, trial = 1, transform=transform_train)
+
+        color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
+        # First import
+        query_img, query_label = process_test_regdb(data_path, trial=1, modal='visible')
+        gall_img, gall_label = process_test_regdb(data_path, trial=1, modal='thermal')
+
 
     ######################################### TEST SET
-    # First import
-    query_img, query_label = process_test_regdb(data_path, trial= 1, modal='visible')
-    gall_img, gall_label = process_test_regdb(data_path, trial= 1, modal='thermal')
+
     # Gallery of thermal images - Queryset = Gallery of visible query
     gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=( img_w, img_h))
     queryset = TestData(query_img, query_label, transform=transform_test, img_size=( img_w, img_h))
@@ -73,7 +94,7 @@ def multi_process() :
     n_query = len(query_label)
     n_gall = len(gall_label)
 
-    print('Dataset RegDB statistics:')
+    print(f'Dataset {dataset} statistics:')
     print('   set     |  Nb ids |  Nb img    ')
     print('  ------------------------------')
     print(f'  visible  | {n_class:5d} | {len(trainset.train_color_label):8d}')
@@ -183,10 +204,13 @@ def multi_process() :
         distmat_fc = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
 
         # evaluation
+        if dataset == 'regdb':
+            cmc, mAP, mINP      = eval_regdb(-distmat_pool, query_label, gall_label)
+            cmc_att, mAP_att, mINP_att  = eval_regdb(-distmat_fc, query_label, gall_label)
 
-        cmc, mAP, mINP = eval_regdb(-distmat_pool, query_label, gall_label)
-        cmc_att, mAP_att, mINP_att = eval_regdb(-distmat_fc, query_label, gall_label)
-
+        elif dataset == 'sysu':
+            cmc, mAP, mINP = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
+            cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc, query_label, gall_label, query_cam, gall_cam)
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
 
 

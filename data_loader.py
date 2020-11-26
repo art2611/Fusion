@@ -3,7 +3,8 @@ from PIL import Image
 import torch.utils.data as data
 from torchvision import transforms
 import matplotlib.pyplot as plt
-
+import os
+import random
 
 class RegDBData(data.Dataset):
     def __init__(self, data_dir, trial, transform=None, colorIndex=None, thermalIndex=None):
@@ -61,6 +62,35 @@ class RegDBData(data.Dataset):
         return len(self.train_color_label)
 
 
+class SYSUData(data.Dataset):
+    def __init__(self, data_dir, transform=None, colorIndex=None, thermalIndex=None):
+        data_dir = '../Datasets/SYSU-MM01/'
+        # Load training images (path) and labels
+        train_color_image = np.load(data_dir + 'train_rgb_resized_img.npy')
+        self.train_color_label = np.load(data_dir + 'train_rgb_resized_label.npy')
+
+        train_thermal_image = np.load(data_dir + 'train_ir_resized_img.npy')
+        self.train_thermal_label = np.load(data_dir + 'train_ir_resized_label.npy')
+
+        # BGR to RGB
+        self.train_color_image = train_color_image
+        self.train_thermal_image = train_thermal_image
+        self.transform = transform
+        self.cIndex = colorIndex
+        self.tIndex = thermalIndex
+
+    def __getitem__(self, index):
+        img1, target1 = self.train_color_image[self.cIndex[index]], self.train_color_label[self.cIndex[index]]
+        img2, target2 = self.train_thermal_image[self.tIndex[index]], self.train_thermal_label[self.tIndex[index]]
+
+        img1 = self.transform(img1)
+        img2 = self.transform(img2)
+
+        return img1, img2, target1, target2
+
+    def __len__(self):
+        return len(self.train_color_label)
+
 def load_data(input_data_path):
     with open(input_data_path) as f:
         data_file_list = open(input_data_path, 'rt').read().splitlines()
@@ -71,6 +101,7 @@ def load_data(input_data_path):
     return file_image, file_label
 
 # generate the idx of each person identity for instance, identity 10 have the index 100 to 109
+
 def GenIdx(train_color_label, train_thermal_label):
     color_pos = []
     unique_label_color = np.unique(train_color_label)
@@ -100,6 +131,70 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
         file_label = [int(s.split(' ')[1]) for s in data_file_list]
 
     return file_image, np.array(file_label)
+
+
+def process_query_sysu(data_path, mode='all', relabel=False):
+    if mode == 'all':
+        ir_cameras = ['cam3', 'cam6']
+    elif mode == 'indoor':
+        ir_cameras = ['cam3', 'cam6']
+
+    file_path = os.path.join(data_path, 'exp/test_id.txt')
+    files_rgb = []
+    files_ir = []
+
+    with open(file_path, 'r') as file:
+        ids = file.read().splitlines()
+        ids = [int(y) for y in ids[0].split(',')]
+        ids = ["%04d" % x for x in ids]
+
+    for id in sorted(ids):
+        for cam in ir_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                files_ir.extend(new_files)
+    query_img = []
+    query_id = []
+    query_cam = []
+    for img_path in files_ir:
+        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
+        query_img.append(img_path)
+        query_id.append(pid)
+        query_cam.append(camid)
+    return query_img, np.array(query_id), np.array(query_cam)
+
+
+def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False):
+    random.seed(trial)
+
+    if mode == 'all':
+        rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
+    elif mode == 'indoor':
+        rgb_cameras = ['cam1', 'cam2']
+
+    file_path = os.path.join(data_path, 'exp/test_id.txt')
+    files_rgb = []
+    with open(file_path, 'r') as file:
+        ids = file.read().splitlines()
+        ids = [int(y) for y in ids[0].split(',')]
+        ids = ["%04d" % x for x in ids]
+
+    for id in sorted(ids):
+        for cam in rgb_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                files_rgb.append(random.choice(new_files))
+    gall_img = []
+    gall_id = []
+    gall_cam = []
+    for img_path in files_rgb:
+        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
+        gall_img.append(img_path)
+        gall_id.append(pid)
+        gall_cam.append(camid)
+    return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
     def __init__(self, test_img_file, test_label, transform=None, img_size = (144,288)):

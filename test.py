@@ -29,7 +29,6 @@ num_of_same_id_in_batch = 4  # Number of same identity in a batch
 workers = 4
 lr = 0.001
 checkpoint_path = '../save_model/'
-suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 #
 test_mode = [2, 1]  # visible to thermal
 
@@ -41,6 +40,14 @@ transform_test = transforms.Compose([
     normalize,
 ])
 writer = SummaryWriter("runs/Fusion1earlyTest")
+
+dataset = 'regdb'
+if dataset == 'sysu':
+    data_path = '../Datasets/SYSU/'
+    suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+elif dataset == 'regdb':
+    data_path = '../Datasets/RegDB/'
+    suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
     print('Extracting Gallery Feature...')
@@ -153,6 +160,78 @@ def multi_process() :
         print(
             'POOL:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
                 cmc_pool[0], cmc_pool[4], cmc_pool[9], cmc_pool[19], mAP_pool, mINP_pool))
+
+    if dataset == 'sysu':
+
+        print('==> Resuming from checkpoint..')
+        model_path = checkpoint_path + suffix + '_best.t'
+        # model_path = checkpoint_path + 'regdb_awg_p4_n8_lr_0.1_seed_0_trial_{}_best.t'.format(test_trial)
+        if os.path.isfile(model_path):
+            print('==> loading checkpoint')
+            checkpoint = torch.load(model_path)
+            net = Network(class_num=nclass)
+            net = net.to(device)
+            net.load_state_dict(checkpoint['net'])
+        else :
+            print("Saved model not loaded, care")
+            net = Network(class_num = nclass).to(device)
+
+        # testing set
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode=args.mode)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode=args.mode, trial=0)
+
+        nquery = len(query_label)
+        ngall = len(gall_label)
+        print("Dataset statistics:")
+        print("  ------------------------------")
+        print("  subset   | # ids | # images")
+        print("  ------------------------------")
+        print("  query    | {:5d} | {:8d}".format(len(np.unique(query_label)), nquery))
+        print("  gallery  | {:5d} | {:8d}".format(len(np.unique(gall_label)), ngall))
+        print("  ------------------------------")
+
+        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(args.img_w, args.img_h))
+        query_loader = data.DataLoader(queryset, batch_size=args.test_batch, shuffle=False, num_workers=4)
+        print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
+
+        query_feat_pool, query_feat_fc = extract_query_feat(query_loader)
+        for trial in range(10):
+            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode=args.mode, trial=trial)
+
+            trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(args.img_w, args.img_h))
+            trial_gall_loader = data.DataLoader(trial_gallset, batch_size=args.test_batch, shuffle=False, num_workers=4)
+
+            gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader)
+
+            # pool5 feature
+            distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
+            cmc_pool, mAP_pool, mINP_pool = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
+
+            # fc feature
+            distmat = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
+            cmc, mAP, mINP = eval_sysu(-distmat, query_label, gall_label, query_cam, gall_cam)
+            if trial == 0:
+                all_cmc = cmc
+                all_mAP = mAP
+                all_mINP = mINP
+                all_cmc_pool = cmc_pool
+                all_mAP_pool = mAP_pool
+                all_mINP_pool = mINP_pool
+            else:
+                all_cmc = all_cmc + cmc
+                all_mAP = all_mAP + mAP
+                all_mINP = all_mINP + mINP
+                all_cmc_pool = all_cmc_pool + cmc_pool
+                all_mAP_pool = all_mAP_pool + mAP_pool
+                all_mINP_pool = all_mINP_pool + mINP_pool
+
+            print('Test Trial: {}'.format(trial))
+            print(
+                'FC:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
+                    cmc[0], cmc[4], cmc[9], cmc[19], mAP, mINP))
+            print(
+                'POOL: Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
+                    cmc_pool[0], cmc_pool[4], cmc_pool[9], cmc_pool[19], mAP_pool, mINP_pool))
 
     cmc = all_cmc / 10
     mAP = all_mAP / 10
