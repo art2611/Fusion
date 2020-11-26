@@ -84,7 +84,7 @@ def multi_process() :
     for trial in range(10):
         test_trial = trial +1
         #model_path = checkpoint_path +  args.resume
-        model_path = 'save_model/' + suffix + '_best.t'
+        model_path = checkpoint_path + suffix + '_best.t'
         # model_path = checkpoint_path + 'regdb_awg_p4_n8_lr_0.1_seed_0_trial_{}_best.t'.format(test_trial)
         if os.path.isfile(model_path):
             print('==> loading checkpoint')
