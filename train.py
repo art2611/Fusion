@@ -18,7 +18,7 @@ from evaluation import eval_regdb
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Fusion2")
+    writer = SummaryWriter("runse/Fusion2")
 
     # Init variables :
     img_w = 144
@@ -164,9 +164,10 @@ def multi_process() :
                       f'Accu: {100. * correct / total:.2f}')
         # For each batch, write in tensorBoard
         writer.add_scalar('total_loss', train_loss.avg, epoch)
-        writer.add_scalar('id_loss', id_loss.avg, epoch)
-        writer.add_scalar('tri_loss', tri_loss.avg, epoch)
-        writer.add_scalar('lr', current_lr, epoch)
+        # writer.add_scalar('id_loss', id_loss.avg, epoch)
+        # writer.add_scalar('tri_loss', tri_loss.avg, epoch)
+        # writer.add_scalar('lr', current_lr, epoch)
+        writer.add_scalar('Accuracy', 100. * correct / total, epoch)
 
     def test(epoch):
 
@@ -186,12 +187,9 @@ def multi_process() :
 
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
 
-        writer.add_scalar('rank1', cmc[0], epoch)
+
         writer.add_scalar('mAP', mAP, epoch)
-        writer.add_scalar('mINP', mINP, epoch)
-        writer.add_scalar('rank1_att', cmc_att[0], epoch)
-        writer.add_scalar('mAP_att', mAP_att, epoch)
-        writer.add_scalar('mINP_att', mINP_att, epoch)
+
         return cmc, mAP, mINP, cmc_att, mAP_att, mINP_att
 
     # Training part
