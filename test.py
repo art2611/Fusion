@@ -197,7 +197,7 @@ def multi_process() :
         query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
         print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
 
-        query_feat_pool, query_feat_fc = extract_query_feat(query_loader)
+        query_feat_pool, query_feat_fc = extract_query_feat(query_loader,nquery = nquery, net = net)
         for trial in range(10):
             gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=trial)
 
