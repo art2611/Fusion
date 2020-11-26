@@ -204,7 +204,7 @@ def multi_process() :
             trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
             trial_gall_loader = data.DataLoader(trial_gallset, batch_size= test_batch_size, shuffle=False, num_workers=4)
 
-            gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader)
+            gall_feat_pool, gall_feat_fc = extract_gall_feat(query_loader,ngall = ngall, net = net)
 
             # pool5 feature
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
