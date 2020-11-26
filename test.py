@@ -193,7 +193,7 @@ def multi_process() :
         print("  gallery  | {:5d} | {:8d}".format(len(np.unique(gall_label)), ngall))
         print("  ------------------------------")
 
-        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(args.img_w, args.img_h))
+        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
         query_loader = data.DataLoader(queryset, batch_size=args.test_batch, shuffle=False, num_workers=4)
         print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
 
