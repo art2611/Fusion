@@ -121,6 +121,6 @@ class Network(nn.Module):
         else:
             return self.l2norm(x_pool), self.l2norm(feat)
 
-model = Network(250, arch='resnet50')
+# model = Network(250, arch='resnet50')
 #print(resneut50(pretrained= True))
 # print(thermal_module())
