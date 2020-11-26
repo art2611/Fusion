@@ -41,7 +41,7 @@ transform_test = transforms.Compose([
 ])
 writer = SummaryWriter("runs/Fusion1earlyTest")
 
-dataset = 'regdb'
+dataset = 'sysu'
 if dataset == 'sysu':
     data_path = '../Datasets/SYSU/'
     suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
