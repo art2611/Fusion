@@ -3,7 +3,7 @@ import torch
 import torch.utils.data
 from torch.autograd import Variable
 import time
-from data_loader import RegDBData, GenIdx, process_test_regdb, TestData
+from data_loader import *
 import numpy as np
 from model import Network
 from evaluation import eval_regdb
