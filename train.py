@@ -18,7 +18,7 @@ from evaluation import eval_regdb
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Fusion1end")
+    writer = SummaryWriter("runs/Fusion1middle")
 
     # Init variables :
     img_w = 144
@@ -163,10 +163,11 @@ def multi_process() :
                       f'TLoss: {tri_loss.val:.4f} ({tri_loss.avg:.4f}) '
                       f'Accu: {100. * correct / total:.2f}')
         # For each batch, write in tensorBoard
-        writer.add_scalar('total_loss', train_loss.avg, epoch)
+
         # writer.add_scalar('id_loss', id_loss.avg, epoch)
         # writer.add_scalar('tri_loss', tri_loss.avg, epoch)
         # writer.add_scalar('lr', current_lr, epoch)
+        writer.add_scalar('total_loss', train_loss.avg, epoch)
         writer.add_scalar('Accuracy training', 100. * correct / total, epoch)
 
     def test(epoch):

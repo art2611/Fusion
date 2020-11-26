@@ -40,7 +40,7 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-writer = SummaryWriter("runs/Fusion1endTest")
+writer = SummaryWriter("runs/Fusion1endmiddle")
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
     print('Extracting Gallery Feature...')
@@ -130,7 +130,6 @@ def multi_process() :
             # fc feature
             distmat = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
             cmc, mAP, mINP = eval_regdb(-distmat, query_label, gall_label)
-
 
         if trial == 0:
             all_cmc = cmc
