@@ -6,7 +6,7 @@ import time
 from data_loader import *
 import numpy as np
 from model import Network
-from evaluation import eval_regdb
+from evaluation import eval_regdb, eval_sysu
 from torchvision import transforms
 import torch.utils.data
 from multiprocessing import freeze_support
