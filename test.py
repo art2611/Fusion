@@ -50,6 +50,7 @@ elif dataset == 'regdb':
     nclass = 206
     data_path = '../Datasets/RegDB/'
     suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
     print('Extracting Gallery Feature...')
@@ -198,13 +199,15 @@ def multi_process() :
         print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
 
         query_feat_pool, query_feat_fc = extract_query_feat(query_loader,nquery = nquery, net = net)
+
         for trial in range(10):
-            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=trial)
+
+            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all",  trial=trial)
 
             trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
-            trial_gall_loader = data.DataLoader(trial_gallset, batch_size= test_batch_size, shuffle=False, num_workers=4)
+            trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)
 
-            gall_feat_pool, gall_feat_fc = extract_gall_feat(query_loader,ngall = ngall, net = net)
+            gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
 
             # pool5 feature
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
