@@ -264,14 +264,14 @@ def multi_process() :
                 torch.save(state, checkpoint_path + suffix + '_best.t')
 
             # save model
-            # if epoch > 10 and epoch % args.save_epoch == 0:
-            #     state = {
-            #         'net': net.state_dict(),
-            #         'cmc': cmc,
-            #         'mAP': mAP,
-            #         'epoch': epoch,
-            #     }
-            #     torch.save(state, checkpoint_path + suffix + '_epoch_{}.t'.format(epoch))
+            if epoch > 10 and epoch % 20 == 0:
+                state = {
+                    'net': net.state_dict(),
+                    'cmc': cmc,
+                    'mAP': mAP,
+                    'epoch': epoch,
+                }
+                torch.save(state, checkpoint_path + suffix + '_epoch_{}.t'.format(epoch))
 
             print(
                 'POOL:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
