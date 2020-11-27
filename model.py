@@ -35,6 +35,8 @@ class visible_module(nn.Module):
         x = self.visible.bn1(x)
         x = self.visible.relu(x)
         x = self.visible.maxpool(x)
+        x = self.base.layer1(x)
+        x = self.base.layer2(x)
         return x
 
 class thermal_module(nn.Module):
@@ -50,6 +52,8 @@ class thermal_module(nn.Module):
         x = self.thermal.bn1(x)
         x = self.thermal.relu(x)
         x = self.thermal.maxpool(x)
+        x = self.base.layer1(x)
+        x = self.base.layer2(x)
         return x
 
 class shared_resnet(nn.Module):
@@ -63,8 +67,6 @@ class shared_resnet(nn.Module):
         self.base = model_base
 
     def forward(self, x):
-        x = self.base.layer1(x)
-        x = self.base.layer2(x)
         x = self.base.layer3(x)
         x = self.base.layer4(x)
         return x

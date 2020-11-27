@@ -39,7 +39,7 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-writer = SummaryWriter("runs/Layer1FusionTest_SYSU")
+writer = SummaryWriter("runs/Layer3FusionTest_SYSU")
 
 dataset = 'sysu'
 if dataset == 'sysu':
