@@ -18,7 +18,7 @@ from evaluation import *
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Layer3Fusion_SYSU")
+    writer = SummaryWriter("runs/Layer5Fusion_SYSU")
 
     # Init variables :
     img_w = 144

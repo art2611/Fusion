@@ -37,6 +37,8 @@ class visible_module(nn.Module):
         x = self.visible.maxpool(x)
         x = self.visible.layer1(x)
         x = self.visible.layer2(x)
+        x = self.visible.layer3(x)
+        x = self.visible.layer4(x)
         return x
 
 class thermal_module(nn.Module):
@@ -54,6 +56,8 @@ class thermal_module(nn.Module):
         x = self.thermal.maxpool(x)
         x = self.thermal.layer1(x)
         x = self.thermal.layer2(x)
+        x = self.thermal.layer3(x)
+        x = self.thermal.layer4(x)
         return x
 
 class shared_resnet(nn.Module):
@@ -101,7 +105,7 @@ class Network(nn.Module):
         elif modal == 2:
             x = self.thermal_module(x2)
 
-        x = self.shared_resnet(x)
+        #x = self.shared_resnet(x)
 
         x_pool = self.avgpool(x)
         x_pool = x_pool.view(x_pool.size(0), x_pool.size(1))
