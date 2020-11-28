@@ -5,12 +5,13 @@ from torch.autograd import Variable
 import time
 from data_loader import *
 import numpy as np
-from model import Network
+from model_layer5 import Network_layer5
 from evaluation import eval_regdb, eval_sysu
 from torchvision import transforms
 import torch.utils.data
 from multiprocessing import freeze_support
 from tensorboardX import SummaryWriter
+
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -40,6 +41,7 @@ transform_test = transforms.Compose([
     normalize,
 ])
 writer = SummaryWriter("runs/Layer5FusionTest_SYSU")
+
 
 dataset = 'sysu'
 if dataset == 'sysu':
@@ -100,12 +102,12 @@ def multi_process() :
             if os.path.isfile(model_path):
                 print('==> loading checkpoint')
                 checkpoint = torch.load(model_path)
-                net = Network(class_num=nclass)
+                net = Network_layer5(class_num=nclass)
                 net = net.to(device)
                 net.load_state_dict(checkpoint['net'])
             else :
                 print("Saved model not loaded, care")
-                net = Network(class_num = nclass).to(device)
+                net = Network_layer5(class_num = nclass).to(device)
             # testing set
             query_img, query_label = process_test_regdb(data_path, trial=test_trial, modal='visible')
             gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal='thermal')
@@ -173,12 +175,12 @@ def multi_process() :
         if os.path.isfile(model_path):
             print('==> loading checkpoint')
             checkpoint = torch.load(model_path)
-            net = Network(class_num=nclass)
+            net = Network_layer5(class_num=nclass)
             net = net.to(device)
             net.load_state_dict(checkpoint['net'])
         else :
             print("Saved model not loaded, care")
-            net = Network(class_num = nclass).to(device)
+            net = Network_layer5(class_num = nclass).to(device)
 
         # testing set
         query_img, query_label, query_cam = process_query_sysu(data_path, mode="all")

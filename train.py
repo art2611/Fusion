@@ -11,14 +11,21 @@ import numpy as np
 from utils import IdentitySampler, AverageMeter, adjust_learning_rate
 from loss import BatchHardTripLoss
 from tensorboardX import SummaryWriter
-from model import Network
+from model_layer5 import Network_layer5
+from model_layer3 import Network_layer3
+from model_layer1 import Network_layer1
 from multiprocessing import freeze_support
 from test import extract_gall_feat, extract_query_feat
 from evaluation import *
+import argparse
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Layer5Fusion_SYSU")
+    writer = SummaryWriter("runs/Layer5Fusion_regdb")
+
+    parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
+    parser.add_argument('--fusion', default='layer1', help='dataset name: regdb or sysu]')
+    args = parser.parse_args()
 
     # Init variables :
     img_w = 144
@@ -52,7 +59,7 @@ def multi_process() :
     ])
 
     Timer1 = time.time()
-    dataset = 'sysu'
+    dataset = 'regdb'
     if dataset == 'sysu':
         data_path = '../Datasets/SYSU/'
         suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
@@ -108,8 +115,14 @@ def multi_process() :
     print('==> Building model..')
 
     ######################################### MODEL
+    if args.fusion=="layer1" :
+        net = Network_layer1(n_class).to(device)
 
-    net = Network(n_class).to(device)
+    elif args.fusion == "layer3" :
+        net = Network_layer3(n_class).to(device)
+
+    elif args.fusion == "layer5" :
+        net = Network_layer5(n_class).to(device)
 
     ######################################### TRAINING
     print('==> Start Training...')
@@ -226,6 +239,7 @@ def multi_process() :
     criterion_tri = BatchHardTripLoss(batch_size=loader_batch, margin= 0.3).to(device)
     best_acc = 0
     # for epoch in range(start_epoch, 81 - start_epoch):
+    training_time = time.time()
     for epoch in range(81):
 
         print('==> Preparing Data Loader...')
@@ -245,7 +259,8 @@ def multi_process() :
         # training
         train(epoch)
 
-        if epoch > 0 and epoch % 2 == 0:
+        #Pas de validation pour voir le temps d'entraînement seul
+        if epoch > 0 and epoch % 2 == 0 and False :
             print(f'Test Epoch: {epoch}')
 
             # testing
@@ -280,6 +295,13 @@ def multi_process() :
                 'FC:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
                     cmc_att[0], cmc_att[4], cmc_att[9], cmc_att[19], mAP_att, mINP_att))
             print('Best Epoch [{}]'.format(best_epoch))
+    if args.fusion == "layer1" :
+        print(f' Training time for layer 1 fusion : {time.time() - training_time}')
+    if args.fusion == "layer3" :
+        print(f' Training time for layer 3 fusion : {time.time() - training_time}')
+    if args.fusion == "layer1":
+        print(f' Training time for layer 5 fusion : {time.time() - training_time}')
+    print(time.time() - training_time)
 
 if __name__ == '__main__':
     freeze_support()
