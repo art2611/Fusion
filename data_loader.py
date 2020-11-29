@@ -170,7 +170,7 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
         query_img.append(img_path)
         query_id.append(pid)
         query_cam.append(camid)
-    print(query_id)
+    # print(query_id)
     #print(query_img)
     return query_img, np.array(query_id), np.array(query_cam)
 
