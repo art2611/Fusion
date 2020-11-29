@@ -80,8 +80,8 @@ def multi_process() :
         # query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
         # gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
 
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
     elif args.dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
