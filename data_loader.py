@@ -155,6 +155,7 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
                 files_rgb.append(random.choice(new_files))
+                print(files_rgb)
 
     query_img = []
     query_id = []
