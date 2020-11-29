@@ -183,8 +183,8 @@ def multi_process() :
             net = Network_layer5(class_num = nclass).to(device)
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
 
         nquery = len(query_label)
         ngall = len(gall_label)
