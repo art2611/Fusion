@@ -266,7 +266,7 @@ def multi_process() :
         train(epoch)
 
         #Pas de validation pour voir le temps d'entraînement seul
-        if epoch > 0 and epoch % 1 == 0  :
+        if epoch > 0 and epoch % 2 == 0  :
             print(f'Test Epoch: {epoch}')
 
             # testing
