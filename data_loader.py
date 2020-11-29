@@ -170,7 +170,7 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
         query_img.append(img_path)
         query_id.append(pid)
         query_cam.append(camid)
-    print(query_id)
+    #print(query_id)
     return query_img, np.array(query_id), np.array(query_cam)
 
 
@@ -204,6 +204,7 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
         gall_img.append(img_path)
         gall_id.append(pid)
         gall_cam.append(camid)
+    print(gall_id)
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
