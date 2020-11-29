@@ -21,13 +21,13 @@ import argparse
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    writer = SummaryWriter("runs/Layer5Fusion_regdb")
+
 
     parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
     parser.add_argument('--fusion', default='layer1', help='dataset name: regdb or sysu]')
     parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
     args = parser.parse_args()
-
+    writer = SummaryWriter(f"runs/{args.fusion}Fusion_regdb")
     # Init variables :
     img_w = 144
     img_h = 288
