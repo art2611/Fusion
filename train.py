@@ -76,9 +76,11 @@ def multi_process() :
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all")
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
+        # query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
+        # gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
 
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
     elif dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
@@ -222,8 +224,11 @@ def multi_process() :
             cmc_att, mAP_att, mINP_att  = eval_regdb(-distmat_fc, query_label, gall_label)
 
         elif dataset == 'sysu':
-            cmc, mAP, mINP = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
-            cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc, query_label, gall_label, query_cam, gall_cam)
+            #reverse
+            distmat_pool = np.matmul(gall_feat_pool, np.transpose(query_feat_pool))
+            distmat_fc = np.matmul(gall_feat_fc, np.transpose(query_feat_fc))
+            cmc, mAP, mINP = eval_sysu(-distmat_pool, gall_label, query_label, gall_cam ,query_cam )
+            cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc,gall_label ,query_label ,gall_cam , query_cam)
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
 
 

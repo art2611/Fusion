@@ -183,8 +183,8 @@ def multi_process() :
             net = Network_layer5(class_num = nclass).to(device)
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all")
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
 
         nquery = len(query_label)
         ngall = len(gall_label)
@@ -204,7 +204,8 @@ def multi_process() :
 
         for trial in range(10):
 
-            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all",  trial=trial)
+            #gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all",  trial=trial)
+            gall_img, gall_label, gall_cam = process_query_sysu(data_path, mode="all",  trial=trial)
 
             trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
             trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)
@@ -212,12 +213,16 @@ def multi_process() :
             gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
 
             # pool5 feature
-            distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
-            cmc_pool, mAP_pool, mINP_pool = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
+            # distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
+            distmat_pool = np.matmul(gall_feat_pool, np.transpose(query_feat_pool))
+            # cmc_pool, mAP_pool, mINP_pool = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
+            cmc_pool, mAP_pool, mINP_pool = eval_sysu(-distmat_pool, gall_label, query_label,gall_cam , query_cam)
 
             # fc feature
-            distmat = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
-            cmc, mAP, mINP = eval_sysu(-distmat, query_label, gall_label, query_cam, gall_cam)
+            # distmat = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
+            distmat = np.matmul(gall_feat_fc, np.transpose(query_feat_fc))
+            # cmc, mAP, mINP = eval_sysu(-distmat, query_label, gall_label, query_cam, gall_cam)
+            cmc, mAP, mINP = eval_sysu(-distmat, gall_label, query_label,gall_cam , query_cam)
             if trial == 0:
                 all_cmc = cmc
                 all_mAP = mAP

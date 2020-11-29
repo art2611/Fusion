@@ -133,7 +133,8 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
     return file_image, np.array(file_label)
 
 
-def process_query_sysu(data_path, mode='all', relabel=False):
+def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
+    random.seed(trial)
     if mode == 'all':
         ir_cameras = ['cam3', 'cam6']
     elif mode == 'indoor':
@@ -153,7 +154,8 @@ def process_query_sysu(data_path, mode='all', relabel=False):
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_ir.extend(new_files)
+                files_rgb.append(random.choice(new_files))
+
     query_img = []
     query_id = []
     query_cam = []
@@ -165,7 +167,7 @@ def process_query_sysu(data_path, mode='all', relabel=False):
     return query_img, np.array(query_id), np.array(query_cam)
 
 
-def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False):
+def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
     random.seed(trial)
 
     if mode == 'all':
@@ -185,7 +187,8 @@ def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False):
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_rgb.append(random.choice(new_files))
+                # files_rgb.append(random.choice(new_files))
+                files_rgb.extend(new_files)
     gall_img = []
     gall_id = []
     gall_cam = []

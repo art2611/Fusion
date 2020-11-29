@@ -3,7 +3,6 @@ import torch.nn as nn
 from torch.nn import init
 from torchvision.models import resnet50
 
-
 class Identity(nn.Module):
     def __init__(self):
         super(Identity, self).__init__()
@@ -112,6 +111,10 @@ class Network_layer1(nn.Module):
         else:
             return self.l2norm(x_pool), self.l2norm(feat)
 
-# model = Network(250, arch='resnet50')
+
+# from torchsummary import summary
+# model = Network_layer1(250, arch='resnet50')
+# summary(model, [(3, 288, 144),(3, 288, 144)] , batch_size=32)
+
 #print(resneut50(pretrained= True))
 # print(thermal_module())

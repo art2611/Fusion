@@ -114,6 +114,9 @@ class Network_layer3(nn.Module):
         else:
             return self.l2norm(x_pool), self.l2norm(feat)
 
+# from torchsummary import summary
+# model = Network_layer3(250, arch='resnet50')
+# summary(model, [(3, 288, 144),(3, 288, 144)] , batch_size=32)
 # model = Network(250, arch='resnet50')
 #print(resneut50(pretrained= True))
 # print(thermal_module())

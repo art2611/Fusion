@@ -81,7 +81,7 @@ class Network_layer5(nn.Module):
 
         self.thermal_module = thermal_module(arch=arch)
         self.visible_module = visible_module(arch=arch)
-        self.shared_resnet = shared_resnet(arch=arch)
+        #self.shared_resnet = shared_resnet(arch=arch)
 
         pool_dim = 2048
 
@@ -116,6 +116,12 @@ class Network_layer5(nn.Module):
             return x_pool, self.fc(feat)
         else:
             return self.l2norm(x_pool), self.l2norm(feat)
+
+
+from torchsummary import summary
+model = Network_layer5(250, arch='resnet50')
+summary(model, [(3, 288, 144),(3, 288, 144)] , batch_size=32)
+
 
 # model = Network(250, arch='resnet50')
 #print(resneut50(pretrained= True))
