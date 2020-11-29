@@ -135,6 +135,7 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
 
 def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
     random.seed(trial)
+    print("query")
     if mode == 'all':
         ir_cameras = ['cam3', 'cam6']
     elif mode == 'indoor':
