@@ -25,6 +25,7 @@ def multi_process() :
 
     parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
     parser.add_argument('--fusion', default='layer1', help='dataset name: regdb or sysu]')
+    parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
     args = parser.parse_args()
 
     # Init variables :
@@ -59,17 +60,17 @@ def multi_process() :
     ])
 
     Timer1 = time.time()
-    dataset = 'regdb'
-    if dataset == 'sysu':
+    args.dataset = 'regdb'
+    if args.dataset == 'sysu':
         data_path = '../Datasets/SYSU/'
         suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
-    elif dataset == 'regdb':
+    elif args.dataset == 'regdb':
         data_path = '../Datasets/RegDB/'
         suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 
     ######################################### TRAIN SET
 
-    if dataset == 'sysu':
+    if args.dataset == 'sysu':
         # training set
         trainset = SYSUData(data_path, transform=transform_train)
         # generate the idx of each person identity
@@ -81,7 +82,7 @@ def multi_process() :
 
         query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
-    elif dataset == 'regdb':
+    elif args.dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
@@ -103,7 +104,7 @@ def multi_process() :
     n_query = len(query_label)
     n_gall = len(gall_label)
 
-    print(f'Dataset {dataset} statistics:')
+    print(f'Dataset {args.dataset} statistics:')
     print('   set     |  Nb ids |  Nb img    ')
     print('  ------------------------------')
     print(f'  visible  | {n_class:5d} | {len(trainset.train_color_label):8d}')
@@ -219,11 +220,11 @@ def multi_process() :
         distmat_fc = np.matmul(query_feat_fc, np.transpose(gall_feat_fc))
 
         # evaluation
-        if dataset == 'regdb':
+        if args.dataset == 'regdb':
             cmc, mAP, mINP      = eval_regdb(-distmat_pool, query_label, gall_label)
             cmc_att, mAP_att, mINP_att  = eval_regdb(-distmat_fc, query_label, gall_label)
 
-        elif dataset == 'sysu':
+        elif args.dataset == 'sysu':
             #reverse
             distmat_pool = np.matmul(gall_feat_pool, np.transpose(query_feat_pool))
             distmat_fc = np.matmul(gall_feat_fc, np.transpose(query_feat_fc))
