@@ -205,8 +205,8 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
         gall_img.append(img_path)
         gall_id.append(pid)
         gall_cam.append(camid)
-    print(gall_id)
-    print(gall_img)
+    # print(gall_id)
+    # print(gall_img)
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
