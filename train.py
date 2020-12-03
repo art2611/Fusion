@@ -26,6 +26,7 @@ def multi_process() :
     parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
     parser.add_argument('--fusion', default='layer1', help='dataset name: regdb or sysu]')
     parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
+    parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
     args = parser.parse_args()
     writer = SummaryWriter(f"runs/{args.fusion}Fusion_regdb")
     # Init variables :
@@ -77,11 +78,8 @@ def multi_process() :
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
         # testing set
-        # query_img, query_label, query_cam = process_query_sysu(data_path, mode="indoor", trial=0)
-        # gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="indoor", trial=0)
-
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0)
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0)
+        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0, reid=args.reid)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0, reid=args.reid)
     elif args.dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
@@ -120,10 +118,8 @@ def multi_process() :
     ######################################### MODEL
     if args.fusion=="layer1" :
         net = Network_layer1(n_class).to(device)
-
     elif args.fusion == "layer3" :
         net = Network_layer3(n_class).to(device)
-
     elif args.fusion == "layer5" :
         net = Network_layer5(n_class).to(device)
 
