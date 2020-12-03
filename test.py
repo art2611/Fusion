@@ -19,7 +19,6 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # net = Network(class_num=nclass).to(device)
 
 pool_dim = 2048
-data_path = '../Datasets/RegDB/'
 
 # Init variables :
 img_w = 144
@@ -177,7 +176,7 @@ def multi_process() :
             checkpoint = torch.load(model_path)
             net = Network_layer5(class_num=nclass)
             net = net.to(device)
-            net.load_state_dict(checkpoint['net'])
+            #net.load_state_dict(checkpoint['net'])
         else :
             print("Saved model not loaded, care")
             net = Network_layer5(class_num = nclass).to(device)
