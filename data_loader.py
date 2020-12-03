@@ -133,7 +133,7 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
     return file_image, np.array(file_label)
 
 
-def process_query_sysu_new(data_path, trial=0, mode='all', relabel=False, reid="VtoT"):
+def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT"):
     random.seed(trial)
     print("query")
     if mode == 'all':
@@ -211,7 +211,8 @@ def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False, reid="Vt
         gall_id.append(pid)
         gall_cam.append(camid)
     return gall_img, np.array(gall_id), np.array(gall_cam)
-def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
+
+def process_gallery_sysu_new(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
     random.seed(trial)
 
     if mode == 'all':
