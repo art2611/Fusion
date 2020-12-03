@@ -53,7 +53,7 @@ writer = SummaryWriter("runs/Layer5FusionTest_SYSU")
 if args.dataset == 'sysu':
     nclass = 395
     data_path = '../Datasets/SYSU/'
-    suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    suffix = f'SYSU_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 elif args.dataset == 'regdb':
     nclass = 206
     data_path = '../Datasets/RegDB/'
@@ -195,8 +195,8 @@ def multi_process() :
             sys.exit("Saved model not loaded, care")
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0, reid=args.reid)
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0, reid=args.reid)
+        query_img, query_label, query_cam = process_query_sysu(data_path, "test", mode="all", trial=0, reid=args.reid)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test",  mode="all", trial=0, reid=args.reid)
 
         nquery = len(query_label)
         ngall = len(gall_label)
@@ -217,7 +217,7 @@ def multi_process() :
 
         for trial in range(10):
 
-            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all",  trial=trial, reid=args.reid)
+            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test", mode="all",  trial=trial, reid=args.reid)
             trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
 
             trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)

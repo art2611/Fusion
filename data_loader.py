@@ -133,7 +133,7 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
     return file_image, np.array(file_label)
 
 
-def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT"):
+def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, reid="VtoT"):
     random.seed(trial)
     print("query")
     if mode == 'all':
@@ -143,7 +143,11 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT
         rgb_cameras = ['cam1', 'cam2']
         ir_cameras = ['cam3', 'cam6']
 
-    file_path = os.path.join(data_path, 'exp/test_id.txt')
+    if method == "test":
+        file_path = os.path.join(data_path, 'exp/test_id.txt')
+    elif method == "valid":
+        file_path = os.path.join(data_path, 'exp/val_id.txt')
+
     files_rgb = []
     files_ir = []
 
@@ -181,15 +185,17 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT
     return query_img, np.array(query_id), np.array(query_cam)
 
 
-def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
+def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, reid="VtoT"):
     random.seed(trial)
 
     if mode == 'all':
         rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
     elif mode == 'indoor':
         rgb_cameras = ['cam1', 'cam2']
-
-    file_path = os.path.join(data_path, 'exp/test_id.txt')
+    if method == "test" :
+        file_path = os.path.join(data_path, 'exp/test_id.txt')
+    elif method == "valid" :
+        file_path = os.path.join(data_path, 'exp/val_id.txt')
     files_rgb = []
     with open(file_path, 'r') as file:
         ids = file.read().splitlines()

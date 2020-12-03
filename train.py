@@ -64,7 +64,7 @@ def multi_process() :
 
     if args.dataset == 'sysu':
         data_path = '../Datasets/SYSU/'
-        suffix = f'SYSU_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+        suffix = f'SYSU_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
     elif args.dataset == 'regdb':
         data_path = '../Datasets/RegDB/'
         suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
@@ -78,8 +78,8 @@ def multi_process() :
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, mode="all", trial=0, reid=args.reid)
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, mode="all", trial=0, reid=args.reid)
+        query_img, query_label, query_cam = process_query_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
+        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
     elif args.dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
