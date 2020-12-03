@@ -75,6 +75,8 @@ def extract_gall_feat(gall_loader, ngall, net):
             batch_num = input.size(0)
             input = Variable(input.cuda())
             feat_pool, feat_fc = net(input, input, test_mode)
+            print(feat_pool.shape)
+            print(feat_fc.shape)
             gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
             gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
             ptr = ptr + batch_num
