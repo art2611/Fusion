@@ -74,16 +74,10 @@ def extract_gall_feat(gall_loader, ngall, net):
         for batch_idx, (input, label) in enumerate(gall_loader):
             batch_num = input.size(0)
             input = Variable(input.cuda())
-            feat_pool, feat_fc = net(input, input, test_mode)
-            print(feat_pool.shape[0])
-            print(feat_fc.shape[0])
-            if feat_pool.shape[0] == 64 :
-                print("Egal 64 !! ")
-                print(len(feat_pool.detach().cpu().numpy()))
-                print(len(feat_fc.detach().cpu().numpy()))
-                gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
-                gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-                ptr = ptr + batch_num
+            feat_pool, feat_fc = net(input, input, modal=test_mode)
+            gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+            gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+            ptr = ptr + batch_num
     print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     return gall_feat_pool, gall_feat_fc
 
@@ -103,7 +97,7 @@ def extract_query_feat(query_loader, nquery, net):
         for batch_idx, (input, label) in enumerate(query_loader):
             batch_num = input.size(0)
             input = Variable(input.cuda())
-            feat_pool, feat_fc = net(input, input, test_mode)
+            feat_pool, feat_fc = net(input, input, modal=test_mode)
             query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
             query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
             ptr = ptr + batch_num
