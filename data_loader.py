@@ -153,12 +153,11 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT
         ids = ["%04d" % x for x in ids]
 
     for id in sorted(ids):
-        for id in sorted(ids):
-            for cam in rgb_cameras:
-                img_dir = os.path.join(data_path, cam, id)
-                if os.path.isdir(img_dir):
-                    new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                    files_rgb.extend(new_files)
+        for cam in rgb_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                files_rgb.extend(new_files)
         for cam in ir_cameras:
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
@@ -200,6 +199,7 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False, reid=
         ids = file.read().splitlines()
         ids = [int(y) for y in ids[0].split(',')]
         ids = ["%04d" % x for x in ids]
+
     for id in sorted(ids):
         for cam in rgb_cameras:
             img_dir = os.path.join(data_path, cam, id)
