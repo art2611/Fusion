@@ -203,7 +203,8 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
         gall_id.append(pid)
         gall_cam.append(camid)
     # print(gall_id)
-    # print(gall_img)
+    print(f'Len of query : {len(gall_img)}')
+
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
