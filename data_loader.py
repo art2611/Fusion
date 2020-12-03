@@ -192,8 +192,11 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                print()
                 #files_rgb.append(random.choice(new_files))
                 files_rgb.extend(new_files)
+    print(len(ids))
+    print(len(rgb_cameras))
     gall_img = []
     gall_id = []
     gall_cam = []
