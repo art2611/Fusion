@@ -80,6 +80,7 @@ def multi_process() :
         # testing set
         query_img, query_label, query_cam = process_query_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
+
     elif args.dataset == 'regdb':
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
