@@ -186,17 +186,16 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
         ids = file.read().splitlines()
         ids = [int(y) for y in ids[0].split(',')]
         ids = ["%04d" % x for x in ids]
-
+    count = 0
     for id in sorted(ids):
         for cam in rgb_cameras:
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
+                count+=1
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                print()
                 #files_rgb.append(random.choice(new_files))
                 files_rgb.extend(new_files)
-    print(len(ids))
-    print(len(rgb_cameras))
+    print(count)
     gall_img = []
     gall_id = []
     gall_cam = []
