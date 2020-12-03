@@ -220,11 +220,9 @@ def multi_process() :
 
         elif args.dataset == 'sysu':
 
-            distmat_pool = np.matmul(gall_feat_pool, np.transpose(query_feat_pool))
-            distmat_fc = np.matmul(gall_feat_fc, np.transpose(query_feat_fc))
-
             cmc, mAP, mINP = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
             cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc, query_label, gall_label, query_cam, gall_cam)
+
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
 
 
