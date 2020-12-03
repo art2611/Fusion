@@ -167,8 +167,6 @@ def multi_process() :
 
             data_time.update(time.time() - end)
 
-            #feat is the feature vectore out of
-            # Out is the last output
             feat, out0, = net(input1, input2)
 
             loss_ce = criterion_id(out0, labels)
