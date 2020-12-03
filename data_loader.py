@@ -133,7 +133,7 @@ def process_test_regdb(img_dir, trial=1, modal='visible'):
     return file_image, np.array(file_label)
 
 
-def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT"):
+def process_query_sysu_new(data_path, trial=0, mode='all', relabel=False, reid="VtoT"):
     random.seed(trial)
     print("query")
     if mode == 'all':
@@ -177,12 +177,41 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT
         query_img.append(img_path)
         query_id.append(pid)
         query_cam.append(camid)
-    print(f"Len of query : {len(query_img)}")
     #print(query_img)
     return query_img, np.array(query_id), np.array(query_cam)
 
 
-def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False, reid="VtoT"):
+def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
+    random.seed(trial)
+
+    if mode == 'all':
+        rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
+    elif mode == 'indoor':
+        rgb_cameras = ['cam1', 'cam2']
+
+    file_path = os.path.join(data_path, 'exp/test_id.txt')
+    files_rgb = []
+    with open(file_path, 'r') as file:
+        ids = file.read().splitlines()
+        ids = [int(y) for y in ids[0].split(',')]
+        ids = ["%04d" % x for x in ids]
+
+    for id in sorted(ids):
+        for cam in rgb_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                files_rgb.append(random.choice(new_files))
+    gall_img = []
+    gall_id = []
+    gall_cam = []
+    for img_path in files_rgb:
+        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
+        gall_img.append(img_path)
+        gall_id.append(pid)
+        gall_cam.append(camid)
+    return gall_img, np.array(gall_id), np.array(gall_cam)
+def process_gallery_sysu(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
     random.seed(trial)
 
     if mode == 'all':
@@ -223,7 +252,7 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False, reid=
         gall_img.append(img_path)
         gall_id.append(pid)
         gall_cam.append(camid)
-    print(f'Len of query : {len(gall_img)}')
+
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
