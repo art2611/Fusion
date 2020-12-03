@@ -77,9 +77,11 @@ def extract_gall_feat(gall_loader, ngall, net):
             feat_pool, feat_fc = net(input, input, test_mode)
             print(feat_pool.shape)
             print(feat_fc.shape)
-            gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
-            gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-            ptr = ptr + batch_num
+            if feat_pool.shape[0] == 64 :
+                print("Different !! ")
+                gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
     print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     return gall_feat_pool, gall_feat_fc
 
