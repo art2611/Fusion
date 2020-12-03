@@ -167,7 +167,7 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False):
         query_img.append(img_path)
         query_id.append(pid)
         query_cam.append(camid)
-    print(f"Len of gallery : {len(query_img)}")
+    print(f"Len of qury : {len(query_img)}")
     #print(query_img)
     return query_img, np.array(query_id), np.array(query_cam)
 
@@ -192,8 +192,8 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False):
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_rgb.append(random.choice(new_files))
-                # files_rgb.extend(new_files)
+                #files_rgb.append(random.choice(new_files))
+                files_rgb.extend(new_files)
     gall_img = []
     gall_id = []
     gall_cam = []
