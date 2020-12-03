@@ -80,6 +80,7 @@ def extract_gall_feat(gall_loader, ngall, net):
             if feat_pool.shape[0] == 64 :
                 print("Egal 64 !! ")
                 print(len(feat_pool.detach().cpu().numpy()))
+                print(len(feat_fc.detach().cpu().numpy()))
                 gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
                 ptr = ptr + batch_num
