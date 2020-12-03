@@ -163,8 +163,7 @@ def process_query_sysu(data_path, trial=0, mode='all', relabel=False, reid="VtoT
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                # files_ir.append(random.choice(new_files))
-                # files_ir.append(random.choice(new_files))
+                #
                 files_ir.extend(new_files)
 
     query_img = []
@@ -206,12 +205,12 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False, reid=
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_rgb.extend(new_files)
+                files_rgb.append(random.choice(new_files))
         for cam in ir_cameras:
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_ir.extend(new_files)
+                files_ir.append(random.choice(new_files))
     gall_img = []
     gall_id = []
     gall_cam = []
@@ -219,7 +218,6 @@ def process_gallery_sysu(data_path, mode='indoor', trial=0, relabel=False, reid=
         files = files_ir
     elif reid=="TtoV" :
         files = files_rgb
-
     for img_path in files:
         camid, pid = int(img_path[-15]), int(img_path[-13:-9])
         gall_img.append(img_path)
