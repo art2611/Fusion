@@ -190,7 +190,7 @@ def multi_process() :
                 net = Network_layer3(class_num=nclass).to(device)
             elif args.fusion == "layer5":
                 net = Network_layer5(class_num=nclass).to(device)
-            #net.load_state_dict(checkpoint['net'])
+            net.load_state_dict(checkpoint['net'])
         else :
             sys.exit("Saved model not loaded, care")
 
