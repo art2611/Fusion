@@ -18,17 +18,26 @@ from multiprocessing import freeze_support
 from test import extract_gall_feat, extract_query_feat
 from evaluation import *
 import argparse
+from datetime import date
+
+
 
 def multi_process() :
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
     parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
-    parser.add_argument('--fusion', default='layer1', help='dataset name: regdb or sysu]')
-    parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
+    parser.add_argument('--fusion', default='layer1', help='layer to fuse')
+    parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu')
     parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
+
     args = parser.parse_args()
-    writer = SummaryWriter(f"runs/{args.fusion}Fusion_regdb")
+
+    today = date.today()
+    # dd/mm/YY
+    d1 = today.strftime("%d/%m/%Y")
+
+    writer = SummaryWriter(f"runs/{args.fusion}_Fusion_train_{args.dataset}_{d1}_{time.time()}")
     # Init variables :
     img_w = 144
     img_h = 288

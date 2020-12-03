@@ -15,6 +15,7 @@ import torch.utils.data
 from multiprocessing import freeze_support
 from tensorboardX import SummaryWriter
 import argparse
+from datetime import date
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -47,7 +48,11 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-writer = SummaryWriter("runs/Layer5FusionTest_SYSU")
+today = date.today()
+# dd/mm/YY
+d1 = today.strftime("%d/%m/%Y")
+
+writer = SummaryWriter(f"runs/{args.fusion}_Fusion_Test_{args.dataset}_{d1}_{time.time()}")
 
 
 if args.dataset == 'sysu':
