@@ -217,6 +217,8 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
                 files_rgb.append(random.choice(new_files))
+            # else :
+            #     print(f'this dir does not exist : {img_dir}')
         for cam in ir_cameras:
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
