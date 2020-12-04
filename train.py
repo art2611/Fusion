@@ -1,4 +1,5 @@
 import torch
+import sys
 import torch.optim as optim
 import torch.utils.data
 import torch.nn as nn
@@ -33,11 +34,17 @@ def multi_process() :
 
     args = parser.parse_args()
 
+    ### Tensorboard init
     today = date.today()
     # dd/mm/YY
     d1 = today.strftime("%d/%m/%Y")
-
     writer = SummaryWriter(f"runs/{args.fusion}_Fusion_train_{args.dataset}_{d1}_{time.time()}")
+
+    ### assure good fusion args
+    fusion_list=['layer1', 'layer3', 'layer5']
+    if args.fusion not in fusion_list :
+        sys.exit(f'--fusion should be in {fusion_list}')
+
     # Init variables :
     img_w = 144
     img_h = 288
