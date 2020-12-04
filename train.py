@@ -102,8 +102,12 @@ def multi_process() :
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
         # First import
-        query_img, query_label = process_test_regdb(data_path, trial=1, modal='visible')
-        gall_img, gall_label = process_test_regdb(data_path, trial=1, modal='thermal')
+        if args.reid == "VtoT":
+            modal=["visible", "thermal"]
+        if args.reid == "TtoV":
+            modal = ["thermal", "visible"]
+        query_img, query_label = process_test_regdb(data_path, trial=1, modal=modal[0])
+        gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=modal[1])
 
 
     ######################################### TEST SET
