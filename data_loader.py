@@ -192,8 +192,10 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
 
     if mode == 'all':
         rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
+        ir_cameras = ['cam3', 'cam6']
     elif mode == 'indoor':
         rgb_cameras = ['cam1', 'cam2']
+        ir_cameras = ['cam3', 'cam6']
 
     if method == "test":
         print("Test set called")
@@ -202,39 +204,6 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
         print("Validation set called")
         file_path = os.path.join(data_path, 'exp/val_id.txt')
 
-    files_rgb = []
-    with open(file_path, 'r') as file:
-        ids = file.read().splitlines()
-        ids = [int(y) for y in ids[0].split(',')]
-        ids = ["%04d" % x for x in ids]
-
-    for id in sorted(ids):
-        for cam in rgb_cameras:
-            img_dir = os.path.join(data_path, cam, id)
-            if os.path.isdir(img_dir):
-                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                files_rgb.append(random.choice(new_files))
-    gall_img = []
-    gall_id = []
-    gall_cam = []
-    for img_path in files_rgb:
-        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
-        gall_img.append(img_path)
-        gall_id.append(pid)
-        gall_cam.append(camid)
-    return gall_img, np.array(gall_id), np.array(gall_cam)
-
-def process_gallery_sysu_new(data_path, mode='all', trial=0, relabel=False, reid="VtoT"):
-    random.seed(trial)
-
-    if mode == 'all':
-        rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
-        ir_cameras = ['cam3', 'cam6']
-    elif mode == 'indoor':
-        rgb_cameras = ['cam1', 'cam2']
-        ir_cameras = ['cam3', 'cam6']
-
-    file_path = os.path.join(data_path, 'exp/test_id.txt')
     files_rgb = []
     files_ir = []
     with open(file_path, 'r') as file:

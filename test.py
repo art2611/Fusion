@@ -119,7 +119,7 @@ def multi_process() :
             model_path = checkpoint_path + suffix + '_best.t'
             # model_path = checkpoint_path + 'regdb_awg_p4_n8_lr_0.1_seed_0_trial_{}_best.t'.format(test_trial)
             if os.path.isfile(model_path):
-                print('==> loading checkpoint')
+                print(f'==> loading {args.fusion} fuse checkpoint')
                 checkpoint = torch.load(model_path)
                 if args.fusion == "layer1":
                     net = Network_layer1(class_num=nclass).to(device)
@@ -201,6 +201,9 @@ def multi_process() :
 
         # testing set
         query_img, query_label, query_cam = process_query_sysu(data_path, "test", mode="all", trial=0, reid=args.reid)
+        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
+        query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test",  mode="all", trial=0, reid=args.reid)
 
         nquery = len(query_label)
@@ -212,10 +215,6 @@ def multi_process() :
         print("  query    | {:5d} | {:8d}".format(len(np.unique(query_label)), nquery))
         print("  gallery  | {:5d} | {:8d}".format(len(np.unique(gall_label)), ngall))
         print("  ------------------------------")
-
-        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
-        query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
-
         print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
 
         query_feat_pool, query_feat_fc = extract_query_feat(query_loader,nquery = nquery, net = net)
