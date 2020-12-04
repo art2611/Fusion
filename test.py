@@ -52,7 +52,7 @@ today = date.today()
 # dd/mm/YY
 d1 = today.strftime("%d/%m/%Y")
 
-writer = SummaryWriter(f"runs/{args.fusion}_Fusion_Test_{args.dataset}_{d1}_{time.time()}")
+writer = SummaryWriter(f"runs/{args.reid}_{args.fusion}_Fusion_train_{args.dataset}_day{d1}_{time.time()}")
 
 
 if args.dataset == 'sysu':

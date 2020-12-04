@@ -37,8 +37,8 @@ def multi_process() :
     ### Tensorboard init
     today = date.today()
     # dd/mm/YY
-    d1 = today.strftime("%d/%m/%Y")
-    writer = SummaryWriter(f"runs/{args.fusion}_Fusion_train_{args.dataset}_{d1}_{time.time()}")
+    d1 = today.strftime("%d")
+    writer = SummaryWriter(f"runs/{args.reid}_{args.fusion}_Fusion_train_{args.dataset}_day{d1}_{time.time()}")
 
     ### assure good fusion args
     fusion_list=['layer1', 'layer3', 'layer5']
