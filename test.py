@@ -131,9 +131,13 @@ def multi_process() :
                 net.load_state_dict(checkpoint['net'])
             else :
                 sys.exit("Saved model not loaded, care")
-            # testing set
-            query_img, query_label = process_test_regdb(data_path, trial=test_trial, modal='visible')
-            gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal='thermal')
+            # First import
+            if args.reid == "VtoT":
+                modal = ["visible", "thermal"]
+            if args.reid == "TtoV":
+                modal = ["thermal", "visible"]
+            query_img, query_label = process_test_regdb(data_path, trial=test_trial, modal=modal[0])
+            gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=modal[1])
 
             gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
             gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False, num_workers=workers)
