@@ -83,7 +83,7 @@ def multi_process() :
         suffix = f'SYSU_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
     elif args.dataset == 'regdb':
         data_path = '../Datasets/RegDB/'
-        suffix = f'RegDB_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+        suffix = f'RegDB_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 
     ######################################### TRAIN SET
 
