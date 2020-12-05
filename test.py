@@ -63,6 +63,7 @@ elif args.dataset == 'regdb':
     nclass = 206
     data_path = '../Datasets/RegDB/'
     suffix = f'RegDB_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    print(f'model_to_load : {suffix}')
 
 def extract_gall_feat(gall_loader, ngall, net):
     net.eval()
