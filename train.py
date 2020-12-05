@@ -245,8 +245,6 @@ def multi_process() :
             cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc, query_label, gall_label, query_cam, gall_cam)
 
         print('Evaluation Time:\t {:.3f}'.format(time.time() - start))
-
-
         writer.add_scalar('Accuracy validation', mAP, epoch)
 
         return cmc, mAP, mINP, cmc_att, mAP_att, mINP_att
@@ -279,8 +277,7 @@ def multi_process() :
         # training
         train(epoch)
 
-        #Pas de validation pour voir le temps d'entraînement seul
-        if epoch > 0 and epoch % 1 == 0  :
+        if epoch > 0 and epoch % 2 == 0  :
             print(f'Test Epoch: {epoch}')
 
             # testing
@@ -315,11 +312,12 @@ def multi_process() :
                 'FC:   Rank-1: {:.2%} | Rank-5: {:.2%} | Rank-10: {:.2%}| Rank-20: {:.2%}| mAP: {:.2%}| mINP: {:.2%}'.format(
                     cmc_att[0], cmc_att[4], cmc_att[9], cmc_att[19], mAP_att, mINP_att))
             print('Best Epoch [{}]'.format(best_epoch))
+
     if args.fusion == "layer1" :
         print(f' Training time for layer 1 fusion : {time.time() - training_time}')
     if args.fusion == "layer3" :
         print(f' Training time for layer 3 fusion : {time.time() - training_time}')
-    if args.fusion == "layer1":
+    if args.fusion == "layer5":
         print(f' Training time for layer 5 fusion : {time.time() - training_time}')
     print(time.time() - training_time)
 
