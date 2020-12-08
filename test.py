@@ -243,7 +243,7 @@ def multi_process() :
                 gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
             elif args.reid == "VtoV" or args.reid =="TtoT":
                 query_img, query_label, query_cam, gall_img, gall_label, gall_cam = \
-                    process_test_single_sysu(data_path, "test", trial=trial, mode='all', relabel=False, reid=args.train)
+                    process_test_single_sysu(data_path, "test", trial=trial, mode='all', relabel=False, reid=args.reid)
 
                 queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
