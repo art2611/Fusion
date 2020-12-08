@@ -101,7 +101,6 @@ def multi_process() :
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
-
         query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid)
 
 
