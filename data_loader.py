@@ -278,6 +278,85 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
 
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
+def process_test_single_sysu(data_path, method, trial=0, mode='all', relabel=False, reid="VtoT"):
+    random.seed(trial)
+    print("query")
+    if mode == 'all':
+        rgb_cameras = ['cam1', 'cam2', 'cam4', 'cam5']
+        ir_cameras = ['cam3', 'cam6']
+    elif mode == 'indoor':
+        rgb_cameras = ['cam1', 'cam2']
+        ir_cameras = ['cam3', 'cam6']
+
+    if method == "test":
+        print("Test set called")
+        file_path = os.path.join(data_path, 'exp/test_id.txt')
+    elif method == "valid":
+        print("Validation set called")
+        file_path = os.path.join(data_path, 'exp/val_id.txt')
+
+    files_rgb = []
+    files_ir = []
+
+    with open(file_path, 'r') as file:
+        ids = file.read().splitlines()
+        ids = [int(y) for y in ids[0].split(',')]
+        ids = ["%04d" % x for x in ids]
+
+
+    files_query_visible = []
+    files_gallery_visible = []
+    files_query_thermal = []
+    files_gallery_thermal = []
+    for id in sorted(ids):
+        #Selection of 1 img for gallery per cam and per id, the rest as query
+        for cam in rgb_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                rand = random.choice(new_files)
+                files_gallery_visible.append(rand)
+                for w in new_files:
+                    if w != rand:
+                        files_query_visible.append(w)
+
+        for cam in ir_cameras:
+            img_dir = os.path.join(data_path, cam, id)
+            if os.path.isdir(img_dir):
+                new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
+                rand = random.choice(new_files)
+                files_gallery_thermal.append(rand)
+                for w in new_files:
+                    if w != rand:
+                        files_query_thermal.append(w)
+    query_img = []
+    query_id = []
+    query_cam = []
+    gall_img = []
+    gall_id = []
+    gall_cam = []
+
+    if reid == "visible":
+        files_query = files_query_visible
+        files_gallery = files_gallery_visible
+    elif reid == "thermal":
+        files_query = files_query_thermal
+        files_gallery = files_gallery_thermal
+
+    for img_path in files_query:
+        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
+        query_img.append(img_path)
+        query_id.append(pid)
+        query_cam.append(camid)
+
+    for img_path in files_gallery :
+        camid, pid = int(img_path[-15]), int(img_path[-13:-9])
+        gall_img.append(img_path)
+        gall_id.append(pid)
+        gall_cam.append(camid)
+
+    return query_img, np.array(query_id), np.array(query_cam), gall_img, np.array(gall_id), np.array(gall_cam)
+
 class TestData(data.Dataset):
     def __init__(self, test_img_file, test_label, transform=None, img_size = (144,288)):
 

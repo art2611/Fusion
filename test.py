@@ -138,6 +138,7 @@ def multi_process() :
                 sys.exit("Saved model not loaded, care")
 
             #Prepare query and gallery
+
             query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid)
 
             gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
@@ -206,11 +207,20 @@ def multi_process() :
             sys.exit("Saved model not loaded, care")
 
         # testing set
-        query_img, query_label, query_cam = process_query_sysu(data_path, "test", mode="all", trial=0, reid=args.reid)
-        queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
-        query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+        if args.reid == "VtoT" or args.reid== "TtoV":
+            query_img, query_label, query_cam = process_query_sysu(data_path, "test", mode="all", trial=0, reid=args.reid)
+            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test", mode="all", trial=0, reid=args.reid)
 
-        gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test",  mode="all", trial=0, reid=args.reid)
+            queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
+            query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+            query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery=nquery, net=net)
+
+        elif args.reid =="VtoV" or args.reid == "TtoT" :
+            query_img, query_label, query_cam, gall_img, gall_label, gall_cam =\
+                process_test_single_sysu(data_path, "test", trial=0, mode='all', relabel=False, reid=args.train)
+
+
+
 
         nquery = len(query_label)
         ngall = len(gall_label)
@@ -223,16 +233,19 @@ def multi_process() :
         print("  ------------------------------")
         print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
 
-        query_feat_pool, query_feat_fc = extract_query_feat(query_loader,nquery = nquery, net = net)
+
 
         for trial in range(10):
 
-            gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test", mode="all",  trial=trial, reid=args.reid)
-            trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
+            if args.reid == "VtoT" or args.reid == "TtoV":
+                gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "test", mode="all",  trial=trial, reid=args.reid)
 
-            trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)
-
-            gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
+                trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
+                trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+                gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
+            elif args.reid == "VtoV" or args.reid =="TtoT":
+                query_img, query_label, query_cam, gall_img, gall_label, gall_cam = \
+                    process_test_single_sysu(data_path, "test", trial=trial, mode='all', relabel=False, reid=args.train)
 
             # pool5 feature
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
