@@ -79,6 +79,7 @@ def extract_gall_feat(gall_loader, ngall, net):
         test_mode = 2
     if args.reid == "TtoV" or args.reid == "VtoV":
         test_mode = 1
+    print(f"Gallery test on mode {test_mode} supposed to be 1 if visible or 2 if thermal")
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(gall_loader):
             batch_num = input.size(0)
@@ -102,6 +103,7 @@ def extract_query_feat(query_loader, nquery, net):
         test_mode = 1
     if args.reid == "TtoV" or args.reid== "TtoT" :
         test_mode = 2
+    print(f"Gallery test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(query_loader):
             batch_num = input.size(0)
