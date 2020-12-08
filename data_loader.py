@@ -118,7 +118,21 @@ def GenIdx(train_color_label, train_thermal_label):
     return color_pos, thermal_pos
 
 
-def process_test_regdb(img_dir, modal='visible', trial = 1):
+def process_test_regdb(img_dir, trial=1, modal='visible'):
+    if modal == 'visible':
+        input_data_path = img_dir + 'idx/test_visible_{}'.format(trial) + '.txt'
+    elif modal == 'thermal':
+        input_data_path = img_dir + 'idx/test_thermal_{}'.format(trial) + '.txt'
+
+    with open(input_data_path) as f:
+        data_file_list = open(input_data_path, 'rt').read().splitlines()
+        # Get full list of image and labels
+        file_image = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+        file_label = [int(s.split(' ')[1]) for s in data_file_list]
+
+    return file_image, np.array(file_label)
+
+def process_test_regdb_new(img_dir, modal='visible', trial = 1):
 
     input_visible_data_path = img_dir + f'idx/test_visible_{trial}.txt'
     input_thermal_data_path = img_dir + f'idx/test_thermal_{trial}.txt'
