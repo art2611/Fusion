@@ -105,9 +105,9 @@ def multi_process() :
             modal=["visible", "thermal"]
         if args.reid == "TtoV":
             modal = ["thermal", "visible"]
-        query_img, query_label = process_test_regdb(data_path, trial=1, modal=modal[0])
-        gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=modal[1])
-        # query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid)
+        # query_img, query_label = process_test_regdb(data_path, trial=1, modal=modal[0])
+        # gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=modal[1])
+        query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid)
 
 
     ######################################### TEST SET
