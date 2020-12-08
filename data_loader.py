@@ -136,13 +136,13 @@ def process_test_regdb(img_dir, modal='visible', trial = 1):
         file_label_thermal = [int(s.split(' ')[1]) for s in data_file_list]
 
     #If required, return half of the dataset in two slice
-    if modal == "visible" :
+    if modal == "VtoV" :
         file_image = file_image_visible
         file_label = file_label_visible
-    if modal == "thermal" :
+    if modal == "TtoT" :
         file_image = file_image_thermal
         file_label = file_label_thermal
-    if modal == "thermal" or modal == "visible" :
+    if modal == "TtoT" or modal == "VtoV" :
         first_image_slice_query = []
         first_label_slice_query = []
         sec_image_slice_gallery = []
