@@ -49,7 +49,7 @@ class RegDBData(data.Dataset):
         self.tIndex = thermalIndex
 
     def __getitem__(self, index):
-        # Dataset[i] return images from both modal and the corresponding label
+        #Dataset[i] return images from both modal and the corresponding label
         img1, target1 = self.train_color_image[self.cIndex[index]], self.train_color_label[self.cIndex[index]]
         img2, target2 = self.train_thermal_image[self.tIndex[index]], self.train_thermal_label[self.tIndex[index]]
 
@@ -60,6 +60,7 @@ class RegDBData(data.Dataset):
 
     def __len__(self):
         return len(self.train_color_label)
+
 
 class SYSUData(data.Dataset):
     def __init__(self, data_dir, transform=None, colorIndex=None, thermalIndex=None):
@@ -116,19 +117,59 @@ def GenIdx(train_color_label, train_thermal_label):
 
     return color_pos, thermal_pos
 
-def process_test_regdb(img_dir, trial=1, modal='visible'):
-    if modal == 'visible':
-        input_data_path = img_dir + 'idx/test_visible_{}'.format(trial) + '.txt'
-    elif modal == 'thermal':
-        input_data_path = img_dir + 'idx/test_thermal_{}'.format(trial) + '.txt'
 
-    with open(input_data_path) as f:
-        data_file_list = open(input_data_path, 'rt').read().splitlines()
+def process_test_regdb(img_dir, modal='visible', trial = 1):
+
+    input_visible_data_path = img_dir + f'idx/test_visible_{trial}.txt'
+    input_thermal_data_path = img_dir + f'idx/test_thermal_{trial}.txt'
+
+    with open(input_visible_data_path) as f:
+        data_file_list = open(input_visible_data_path, 'rt').read().splitlines()
         # Get full list of image and labels
-        file_image = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
-        file_label = [int(s.split(' ')[1]) for s in data_file_list]
+        file_image_visible = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+        file_label_visible = [int(s.split(' ')[1]) for s in data_file_list]
 
-    return file_image, np.array(file_label)
+    with open(input_thermal_data_path) as f:
+        data_file_list = open(input_thermal_data_path, 'rt').read().splitlines()
+        # Get full list of image and labels
+        file_image_thermal = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+        file_label_thermal = [int(s.split(' ')[1]) for s in data_file_list]
+
+    #If required, return half of the dataset in two slice
+    if modal == "VtoV" :
+        file_image = file_image_visible
+        file_label = file_label_visible
+    if modal == "TtoT" :
+        file_image = file_image_thermal
+        file_label = file_label_thermal
+    if modal == "TtoT" or modal == "VtoV" :
+        first_image_slice_query = []
+        first_label_slice_query = []
+        sec_image_slice_gallery = []
+        sec_label_slice_gallery = []
+        #On regarde pour chaque id
+        for k in range(len(np.unique(file_label))):
+            appeared=[]
+            # On choisit cinq personnes en query aléatoirement, le reste est placé dans la gallery (5 images)
+            for i in range(5):
+                rand = random.choice(file_image[k*10:k*10+9])
+                while rand in appeared:
+                    rand = random.choice(file_image[k*10:k*10+9])
+                appeared.append(rand)
+                first_image_slice_query.append(rand)
+                first_label_slice_query.append(file_label[k*10])
+            #On regarde la liste d'images de l'id k, on récupère les images n'étant pas dans query (5 images)
+            for i in file_image[k*10:k*10+10] :
+                if i not in appeared :
+                    sec_image_slice_gallery.append(i)
+                    sec_label_slice_gallery.append(file_label[k*10])
+        return(first_image_slice_query, np.array(first_label_slice_query), sec_image_slice_gallery, np.array(sec_label_slice_gallery))
+
+    if modal == "VtoT" :
+        return (file_image_visible, np.array(file_label_visible), file_image_thermal,
+                np.array(file_label_thermal))
+    elif modal == "TtoV" :
+        return(file_image_thermal, np.array(file_label_thermal), file_image_visible, np.array(file_label_visible))
 
 
 def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, reid="VtoT"):
@@ -150,6 +191,7 @@ def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, re
 
     files_rgb = []
     files_ir = []
+
     with open(file_path, 'r') as file:
         ids = file.read().splitlines()
         ids = [int(y) for y in ids[0].split(',')]
@@ -171,17 +213,18 @@ def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, re
     query_img = []
     query_id = []
     query_cam = []
-    if reid == "VtoT":
+    if reid=="VtoT" :
         files = files_rgb
-    elif reid == "TtoV":
+    elif reid=="TtoV" :
         files = files_ir
     for img_path in files:
         camid, pid = int(img_path[-15]), int(img_path[-13:-9])
         query_img.append(img_path)
         query_id.append(pid)
         query_cam.append(camid)
-        # print(query_img)
+    #print(query_img)
     return query_img, np.array(query_id), np.array(query_cam)
+
 
 def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, reid="VtoT"):
     random.seed(trial)
@@ -223,9 +266,9 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
     gall_img = []
     gall_id = []
     gall_cam = []
-    if reid == "VtoT":
+    if reid=="VtoT" :
         files = files_ir
-    elif reid == "TtoV":
+    elif reid=="TtoV" :
         files = files_rgb
     for img_path in files:
         camid, pid = int(img_path[-15]), int(img_path[-13:-9])
@@ -236,7 +279,8 @@ def process_gallery_sysu(data_path, method, mode='all', trial=0, relabel=False, 
     return gall_img, np.array(gall_id), np.array(gall_cam)
 
 class TestData(data.Dataset):
-    def __init__(self, test_img_file, test_label, transform=None, img_size=(144, 288)):
+    def __init__(self, test_img_file, test_label, transform=None, img_size = (144,288)):
+
         test_image = []
         for i in range(len(test_img_file)):
             img = Image.open(test_img_file[i])
@@ -249,10 +293,24 @@ class TestData(data.Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        img1, target1 = self.test_image[index], self.test_label[index]
+        img1,  target1 = self.test_image[index],  self.test_label[index]
         img1 = self.transform(img1)
         return img1, target1
 
-
     def __len__(self):
         return len(self.test_image)
+
+
+# Print some of the images :
+# print(trainset.train_color_image.shape)
+# w=0
+# for i in range(0, 250, 10):
+#     w += 1
+#     print(i)
+#     plt.subplot(5,5,w)
+#     plt.imshow(trainset.train_color_image[i])
+# plt.show()
+
+# testing set
+# query_img, query_label = process_test_regdb(data_path, trial=args.trial, modal='visible')
+# gall_img, gall_label = process_test_regdb(data_path, trial=args.trial, modal='thermal')
