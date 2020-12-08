@@ -31,7 +31,6 @@ def multi_process() :
     parser.add_argument('--fusion', default='layer1', help='layer to fuse')
     parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu')
     parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
-    parser.add_argument('--model', default='VtoT', help='Model to load')
     args = parser.parse_args()
 
     ### Tensorboard init
