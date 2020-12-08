@@ -31,7 +31,7 @@ def multi_process() :
     parser.add_argument('--fusion', default='layer1', help='layer to fuse')
     parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu')
     parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
-
+    parser.add_argument('--model', default='VtoT', help='Model to load')
     args = parser.parse_args()
 
     ### Tensorboard init
@@ -102,12 +102,7 @@ def multi_process() :
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
         # First import
-        if args.reid == "VtoT":
-            modal=["visible", "thermal"]
-        if args.reid == "TtoV":
-            modal = ["thermal", "visible"]
-        query_img, query_label = process_test_regdb(data_path, trial=1, modal=modal[0])
-        gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=modal[1])
+        query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid)
 
 
     ######################################### TEST SET

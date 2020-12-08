@@ -118,19 +118,57 @@ def GenIdx(train_color_label, train_thermal_label):
     return color_pos, thermal_pos
 
 
-def process_test_regdb(img_dir, trial=1, modal='visible'):
-    if modal == 'visible':
-        input_data_path = img_dir + 'idx/test_visible_{}'.format(trial) + '.txt'
-    elif modal == 'thermal':
-        input_data_path = img_dir + 'idx/test_thermal_{}'.format(trial) + '.txt'
+def process_test_regdb(img_dir, modal='visible', trial = 1):
 
-    with open(input_data_path) as f:
-        data_file_list = open(input_data_path, 'rt').read().splitlines()
-        # Get full list of image and labels
-        file_image = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
-        file_label = [int(s.split(' ')[1]) for s in data_file_list]
-
-    return file_image, np.array(file_label)
+    input_visible_data_path = img_dir + f'idx/test_visible_{trial}.txt'
+    input_thermal_data_path = img_dir + f'idx/test_thermal_{trial}.txt'
+    if modal == "visible" or modal == "VtoT" :
+        with open(input_visible_data_path) as f:
+            data_file_list = open(input_visible_data_path, 'rt').read().splitlines()
+            # Get full list of image and labels
+            file_image_visible = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+            file_label_visible = [int(s.split(' ')[1]) for s in data_file_list]
+    if modal == "thermal" or modal == "VtoT":
+        with open(input_thermal_data_path) as f:
+            data_file_list = open(input_thermal_data_path, 'rt').read().splitlines()
+            # Get full list of image and labels
+            file_image_thermal = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+            file_label_thermal = [int(s.split(' ')[1]) for s in data_file_list]
+    #If required, return half of the dataset in two slice
+    if modal == "visible" :
+        file_image = file_image_visible
+        file_label = file_label_visible
+    if modal == "thermal" :
+        file_image = file_image_thermal
+        file_label = file_label_thermal
+    if modal == "thermal" or modal == "visible" :
+        first_image_slice_query = []
+        first_label_slice_query = []
+        sec_image_slice_gallery = []
+        sec_label_slice_gallery = []
+        #On regarde pour chaque id
+        for k in range(len(np.unique(file_label))):
+            appeared=[]
+            # On choisit cinq personnes en query aléatoirement, le reste est placé dans la gallery (5 images)
+            for i in range(5):
+                rand = random.choice(file_image[k*10:k*10+9])
+                while rand in appeared:
+                    rand = random.choice(file_image[k*10:k*10+9])
+                appeared.append(rand)
+                first_image_slice_query.append(rand)
+                first_label_slice_query.append(file_label[k*10])
+            #On regarde la liste d'images de l'id k, on récupère les images n'étant pas dans query (5 images)
+            for i in file_image[k*10:k*10+10] :
+                if i not in appeared :
+                    sec_image_slice_gallery.append(i)
+                    sec_label_slice_gallery.append(file_label[k*10])
+        return(first_image_slice_query, np.array(first_label_slice_query), sec_image_slice_gallery, np.array(sec_label_slice_gallery))
+    #Ancienne version, on verra comment on fait ici
+    if modal == "VtoT" :
+        return (file_image_visible, np.array(file_label_visible), file_image_thermal,
+                np.array(file_label_thermal))
+    elif modal == "TtoV" :
+        return(file_image_thermal, np.array(file_label_thermal), file_image_visible, np.array(file_label_visible))
 
 
 def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, reid="VtoT"):

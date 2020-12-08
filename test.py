@@ -39,6 +39,9 @@ parser = argparse.ArgumentParser(description='PyTorch Cross-Modality Training')
 parser.add_argument('--fusion', default='layer1', help='Layer to fuse data')
 parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
 parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
+parser.add_argument('--trained', default='VtoT', help='Model trained based on VtoT validation')
+
+
 args = parser.parse_args()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -52,17 +55,17 @@ today = date.today()
 # dd/mm/YY
 d1 = today.strftime("%d/%m/%Y")
 
-writer = SummaryWriter(f"runs/{args.reid}_{args.fusion}_Fusion_test_{args.dataset}_day{d1}_{time.time()}")
+writer = SummaryWriter(f"runs/{args.trained}_{args.fusion}_FusionModel_{args.reid}-test_{args.dataset}_day{d1}_{time.time()}")
 
 
 if args.dataset == 'sysu':
     nclass = 296
     data_path = '../Datasets/SYSU/'
-    suffix = f'SYSU_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    suffix = f'SYSU_{args.trained}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
 elif args.dataset == 'regdb':
     nclass = 206
     data_path = '../Datasets/RegDB/'
-    suffix = f'RegDB_{args.reid}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
+    suffix = f'RegDB_{args.trained}_person_fusion({num_of_same_id_in_batch})_same_id({batch_num_identities})_lr_{lr}'
     print(f'model_to_load : {suffix}')
 
 def extract_gall_feat(gall_loader, ngall, net):
@@ -72,9 +75,9 @@ def extract_gall_feat(gall_loader, ngall, net):
     ptr = 0
     gall_feat_pool = np.zeros((ngall, pool_dim))
     gall_feat_fc = np.zeros((ngall, pool_dim))
-    if args.reid == "VtoT" :
+    if args.reid == "VtoT" or args.reid == "TtoT" :
         test_mode = 2
-    if args.reid == "TtoV" :
+    if args.reid == "TtoV" or args.reid == "VtoV":
         test_mode = 1
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(gall_loader):
@@ -95,9 +98,9 @@ def extract_query_feat(query_loader, nquery, net):
     ptr = 0
     query_feat_pool = np.zeros((nquery, pool_dim))
     query_feat_fc = np.zeros((nquery, pool_dim))
-    if args.reid == "VtoT" :
+    if args.reid == "VtoT" or "VtoV":
         test_mode = 1
-    if args.reid == "TtoV" :
+    if args.reid == "TtoV" or "TtoT" :
         test_mode = 2
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(query_loader):
@@ -131,13 +134,9 @@ def multi_process() :
                 net.load_state_dict(checkpoint['net'])
             else :
                 sys.exit("Saved model not loaded, care")
-            # First import
-            if args.reid == "VtoT":
-                modal = ["visible", "thermal"]
-            if args.reid == "TtoV":
-                modal = ["thermal", "visible"]
-            query_img, query_label = process_test_regdb(data_path, trial=test_trial, modal=modal[0])
-            gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=modal[1])
+
+            #Prepare query and gallery
+            query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid)
 
             gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
             gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False, num_workers=workers)
