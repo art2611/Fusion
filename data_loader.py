@@ -336,10 +336,10 @@ def process_test_single_sysu(data_path, method, trial=0, mode='all', relabel=Fal
     gall_id = []
     gall_cam = []
 
-    if reid == "visible":
+    if reid == "VtoV":
         files_query = files_query_visible
         files_gallery = files_gallery_visible
-    elif reid == "thermal":
+    elif reid == "TtoT":
         files_query = files_query_thermal
         files_gallery = files_gallery_thermal
 

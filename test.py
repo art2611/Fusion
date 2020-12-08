@@ -213,16 +213,14 @@ def multi_process() :
 
             queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
             query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+            nquery = len(query_label)
             query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery=nquery, net=net)
-
         elif args.reid =="VtoV" or args.reid == "TtoT" :
             query_img, query_label, query_cam, gall_img, gall_label, gall_cam =\
-                process_test_single_sysu(data_path, "test", trial=0, mode='all', relabel=False, reid=args.train)
+                process_test_single_sysu(data_path, "test", trial=0, mode='all', relabel=False, reid=args.reid)
+            nquery = len(query_label)
 
 
-
-
-        nquery = len(query_label)
         ngall = len(gall_label)
         print("Dataset statistics:")
         print("  ------------------------------")
@@ -246,6 +244,14 @@ def multi_process() :
             elif args.reid == "VtoV" or args.reid =="TtoT":
                 query_img, query_label, query_cam, gall_img, gall_label, gall_cam = \
                     process_test_single_sysu(data_path, "test", trial=trial, mode='all', relabel=False, reid=args.train)
+
+                queryset = TestData(query_img, query_label, transform=transform_test, img_size=(img_w, img_h))
+                query_loader = data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+                query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery=nquery, net=net)
+
+                trial_gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
+                trial_gall_loader = data.DataLoader(trial_gallset, batch_size=test_batch_size, shuffle=False, num_workers=4)
+                gall_feat_pool, gall_feat_fc = extract_gall_feat(trial_gall_loader,ngall = ngall, net = net)
 
             # pool5 feature
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
