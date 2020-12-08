@@ -122,18 +122,19 @@ def process_test_regdb(img_dir, modal='visible', trial = 1):
 
     input_visible_data_path = img_dir + f'idx/test_visible_{trial}.txt'
     input_thermal_data_path = img_dir + f'idx/test_thermal_{trial}.txt'
-    if modal == "visible" or modal == "VtoT" or modal== "TtoV" :
-        with open(input_visible_data_path) as f:
-            data_file_list = open(input_visible_data_path, 'rt').read().splitlines()
-            # Get full list of image and labels
-            file_image_visible = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
-            file_label_visible = [int(s.split(' ')[1]) for s in data_file_list]
-    if modal == "thermal" or modal == "VtoT" or modal== "TtoV":
-        with open(input_thermal_data_path) as f:
-            data_file_list = open(input_thermal_data_path, 'rt').read().splitlines()
-            # Get full list of image and labels
-            file_image_thermal = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
-            file_label_thermal = [int(s.split(' ')[1]) for s in data_file_list]
+
+    with open(input_visible_data_path) as f:
+        data_file_list = open(input_visible_data_path, 'rt').read().splitlines()
+        # Get full list of image and labels
+        file_image_visible = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+        file_label_visible = [int(s.split(' ')[1]) for s in data_file_list]
+
+    with open(input_thermal_data_path) as f:
+        data_file_list = open(input_thermal_data_path, 'rt').read().splitlines()
+        # Get full list of image and labels
+        file_image_thermal = [img_dir + '/' + s.split(' ')[0] for s in data_file_list]
+        file_label_thermal = [int(s.split(' ')[1]) for s in data_file_list]
+
     #If required, return half of the dataset in two slice
     if modal == "visible" :
         file_image = file_image_visible
