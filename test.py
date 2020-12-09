@@ -141,7 +141,6 @@ def extract_query_feat(query_loader, nquery, net):
                 print(feat_fc.shape)
                 query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-                print(query_feat_pool)
                 ptr = ptr + batch_num
         print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     else :
