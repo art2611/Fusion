@@ -4,6 +4,7 @@ import torch.utils.data as data
 from torchvision import transforms
 import matplotlib.pyplot as plt
 import os
+from random import randrange
 import random
 
 class RegDBData(data.Dataset):
@@ -118,7 +119,7 @@ def GenIdx(train_color_label, train_thermal_label):
     return color_pos, thermal_pos
 
 
-def process_test_regdb(img_dir, modal='visible', trial = 1):
+def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based"):
 
     input_visible_data_path = img_dir + f'idx/test_visible_{trial}.txt'
     input_thermal_data_path = img_dir + f'idx/test_thermal_{trial}.txt'
@@ -165,11 +166,45 @@ def process_test_regdb(img_dir, modal='visible', trial = 1):
                     sec_label_slice_gallery.append(file_label[k*10])
         return(first_image_slice_query, np.array(first_label_slice_query), sec_image_slice_gallery, np.array(sec_label_slice_gallery))
 
-    if modal == "VtoT" :
-        return (file_image_visible, np.array(file_label_visible), file_image_thermal,
+    if split == "paper_based":
+        if modal == "VtoT" :
+            return (file_image_visible, np.array(file_label_visible), file_image_thermal,
                 np.array(file_label_thermal))
-    elif modal == "TtoV" :
-        return(file_image_thermal, np.array(file_label_thermal), file_image_visible, np.array(file_label_visible))
+        elif modal == "TtoV":
+            return(file_image_thermal, np.array(file_label_thermal), file_image_visible, np.array(file_label_visible))
+
+    elif split=="experience_based" :
+        first_image_slice_query = []
+        first_label_slice_query = []
+        sec_image_slice_gallery = []
+        sec_label_slice_gallery = []
+
+        # On regarde pour chaque id
+        for k in range(len(np.unique(file_label))):
+            appeared = []
+            # On choisit cinq personnes en query aléatoirement, le reste est placé dans la gallery (5 images)
+            for i in range(5):
+                rand = randrange(10)
+                while rand in appeared:
+                    rand = randrange(10)
+                appeared.append(rand)
+                if modal == "VtoT" :
+                    first_image_slice_query.append(file_image_visible[k * 10 + rand])
+                    first_label_slice_query.append(file_label_visible[k * 10])
+                elif modal == "TtoV" :
+                    first_image_slice_query.append(file_image_thermal[k * 10 + rand])
+                    first_label_slice_query.append(file_label_thermal[k * 10])
+            # On regarde la liste d'images de l'id k, on récupère les images n'étant pas dans query (5 images)
+            for i in [w for w in range(10)]:
+                if i not in appeared:
+                    if modal == "VtoT":
+                        sec_image_slice_gallery.append(file_image_visible[k * 10 + i])
+                        sec_label_slice_gallery.append(file_label_visible[k * 10])
+                    elif modal == "TtoV":
+                        sec_image_slice_gallery.append(file_image_thermal[k * 10 + i])
+                        sec_label_slice_gallery.append(file_label_thermal[k * 10])
+        return (first_image_slice_query, np.array(first_label_slice_query), sec_image_slice_gallery,
+                np.array(sec_label_slice_gallery))
 
 
 def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, reid="VtoT"):

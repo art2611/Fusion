@@ -31,6 +31,7 @@ def multi_process() :
     parser.add_argument('--fusion', default='layer1', help='layer to fuse')
     parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu')
     parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
+    parser.add_argument('--split', default='paper_based', help='How to split data')
     args = parser.parse_args()
 
     ### Tensorboard init
@@ -169,8 +170,10 @@ def multi_process() :
         end = time.time()
 
         for batch_idx, (input1, input2, label1, label2) in enumerate(trainloader):
-
+            print(f"Label 1 : {label1}")
+            print(f"Label 2 : {label2}")
             labels = torch.cat((label1, label2), 0)
+            print(f"Label 3 : {labels}")
 
             input1 = Variable(input1.cuda())
             input2 = Variable(input2.cuda())
