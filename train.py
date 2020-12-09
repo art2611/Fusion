@@ -187,6 +187,7 @@ def multi_process() :
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
             _, predicted = out0.max(1)
+            print(f'predicted : {predicted}')
             correct += (predicted.eq(labels).sum().item() / 2)
 
             loss = loss_ce + loss_tri
