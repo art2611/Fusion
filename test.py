@@ -114,7 +114,7 @@ def extract_query_feat(query_loader, nquery, net):
     print('Extracting Query Feature...')
     start = time.time()
     ptr = 0
-    query_feat_pool = np.zeros((nquery*2, pool_dim))
+    query_feat_pool = np.zeros((nquery, pool_dim))
     query_feat_fc = np.zeros((nquery, pool_dim))
     print(query_feat_pool.shape)
     if args.reid == "VtoT" or args.reid == "VtoV":
@@ -136,6 +136,7 @@ def extract_query_feat(query_loader, nquery, net):
                 input2 = Variable(input2.cuda())
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
                 print(feat_pool.shape)
+                print(feat_fc.shape)
                 query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
                 print(query_feat_pool)
