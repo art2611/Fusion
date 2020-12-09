@@ -76,14 +76,14 @@ def extract_gall_feat(gall_loader, ngall, net):
     print('Extracting Gallery Feature...')
     start = time.time()
     ptr = 0
-    gall_feat_pool = np.zeros((ngall, pool_dim))
-    gall_feat_fc = np.zeros((ngall, pool_dim))
     if args.reid == "VtoT" or args.reid == "TtoT" :
         test_mode = 2
     if args.reid == "TtoV" or args.reid == "VtoV":
         test_mode = 1
     if args.reid == "BtoB" :
         test_mode = 0
+        gall_feat_pool = np.zeros((ngall*2, pool_dim))
+        gall_feat_fc = np.zeros((ngall*2, pool_dim))
         with torch.no_grad():
             for batch_idx, (input1, input2, label) in enumerate(gall_loader):
                 batch_num = input1.size(0) + input2.size(0)
@@ -96,6 +96,8 @@ def extract_gall_feat(gall_loader, ngall, net):
                 ptr = ptr + batch_num
         print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     else :
+        gall_feat_pool = np.zeros((ngall, pool_dim))
+        gall_feat_fc = np.zeros((ngall, pool_dim))
         print(f"Gallery test on mode {test_mode} supposed to be 1 if visible or 2 if thermal")
         with torch.no_grad():
             for batch_idx, (input, label) in enumerate(gall_loader):
@@ -114,15 +116,15 @@ def extract_query_feat(query_loader, nquery, net):
     print('Extracting Query Feature...')
     start = time.time()
     ptr = 0
-    query_feat_pool = np.zeros((nquery*2, pool_dim))
-    query_feat_fc = np.zeros((nquery*2, pool_dim))
-    print(query_feat_pool.shape)
+
     if args.reid == "VtoT" or args.reid == "VtoV":
         test_mode = 1
     if args.reid == "TtoV" or args.reid== "TtoT" :
         test_mode = 2
     if args.reid == "BtoB" :
         test_mode = 0
+        query_feat_pool = np.zeros((nquery * 2, pool_dim))
+        query_feat_fc = np.zeros((nquery * 2, pool_dim))
         print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
         with torch.no_grad():
             for batch_idx, (input1, input2, label) in enumerate(query_loader):
@@ -137,14 +139,14 @@ def extract_query_feat(query_loader, nquery, net):
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
                 print(feat_pool.shape)
                 print(feat_fc.shape)
-                print(ptr)
-                print(ptr+batch_num)
                 query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
                 print(query_feat_pool)
                 ptr = ptr + batch_num
         print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     else :
+        query_feat_pool = np.zeros((nquery, pool_dim))
+        query_feat_fc = np.zeros((nquery, pool_dim))
         print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
         with torch.no_grad():
             for batch_idx, (input, label) in enumerate(query_loader):
@@ -184,17 +186,14 @@ def multi_process() :
                 query_img, query_img_t, query_label, gall_img, gall_img_t, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=int(test_batch_size), shuffle=False,
-                                                          num_workers=workers, drop_last=True)
+                                                          num_workers=workers, drop_last=False)
                 nquery = len(query_label)
                 ngall = len(gall_label)
 
                 queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=int(test_batch_size), shuffle=False,
-                                                           num_workers=4, drop_last=True)
+                                                           num_workers=4, drop_last=False)
 
-                query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery=nquery, net=net)
-
-                sys.exit()
             else :
                 query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
