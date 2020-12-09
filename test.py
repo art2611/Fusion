@@ -216,7 +216,7 @@ def multi_process() :
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
             if args.reid == "BtoB" :
                 query_label = torch.cat((query_label, query_label), 0)
-                gall_label = torch.cat((gall_label, gall_label), 0)*
+                gall_label = torch.cat((gall_label, gall_label), 0)
                 print(query_label)
                 print(query_label.type())
             cmc_pool, mAP_pool, mINP_pool = eval_regdb(-distmat_pool,query_label , gall_label)
