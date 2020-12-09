@@ -114,7 +114,7 @@ def extract_query_feat(query_loader, nquery, net):
     print('Extracting Query Feature...')
     start = time.time()
     ptr = 0
-    query_feat_pool = np.zeros((nquery, pool_dim))
+    query_feat_pool = np.zeros((nquery*2, pool_dim))
     query_feat_fc = np.zeros((nquery, pool_dim))
     print(query_feat_pool.shape)
     if args.reid == "VtoT" or args.reid == "VtoV":
