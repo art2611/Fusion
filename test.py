@@ -130,6 +130,7 @@ def extract_query_feat(query_loader, nquery, net):
                 print(input1.size(0))
                 print(input2.size(0))
                 print(label)
+                print(batch_idx)
                 input1 = Variable(input1.cuda())
                 input2 = Variable(input2.cuda())
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
