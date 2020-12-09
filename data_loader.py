@@ -180,7 +180,7 @@ def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based")
         sec_label_slice_gallery = []
 
         # On regarde pour chaque id
-        for k in range(len(np.unique(file_label))):
+        for k in range(len(np.unique(file_label_visible))):
             appeared = []
             # On choisit cinq personnes en query aléatoirement, le reste est placé dans la gallery (5 images)
             for i in range(5):
