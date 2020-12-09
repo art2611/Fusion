@@ -215,8 +215,10 @@ def multi_process() :
             # pool5 feature
             distmat_pool = np.matmul(query_feat_pool, np.transpose(gall_feat_pool))
             if args.reid == "BtoB" :
-                query_label = query_label.extend(query_label)
-                gall_label = gall_label.extend(gall_label)
+                print(f"Before : {query_label}")
+                query_label = np.concatenate((query_label, query_label), axis=0)
+                print(f"after : {query_label}")
+                gall_label = np.concatenate((gall_label, gall_label), axis=0)
             cmc_pool, mAP_pool, mINP_pool = eval_regdb(-distmat_pool,query_label , gall_label)
 
             # fc feature
