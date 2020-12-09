@@ -40,9 +40,12 @@ parser.add_argument('--fusion', default='layer1', help='Layer to fuse data')
 parser.add_argument('--dataset', default='regdb', help='dataset name: regdb or sysu]')
 parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
 parser.add_argument('--trained', default='VtoT', help='Model trained based on VtoT validation')
-
-
+parser.add_argument('--split', default='paper_based', help='How to split data')
 args = parser.parse_args()
+
+split_list = ["paper_based", "experience_based"]
+if args.split not in split_list:
+    sys.exit(f"--split should be in {split_list}")
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 transform_test = transforms.Compose([
@@ -143,8 +146,7 @@ def multi_process() :
 
             #Prepare query and gallery
 
-            query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid)
-
+            query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
             gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
             gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False, num_workers=workers)
 

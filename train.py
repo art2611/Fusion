@@ -33,6 +33,9 @@ def multi_process() :
     parser.add_argument('--reid', default='VtoT', help='Visible to thermal reid')
     parser.add_argument('--split', default='paper_based', help='How to split data')
     args = parser.parse_args()
+    split_list = ["paper_based", "experience_based"]
+    if args.split not in split_list:
+        sys.exit(f"--split should be in {split_list}")
 
     ### Tensorboard init
     today = date.today()
@@ -102,7 +105,7 @@ def multi_process() :
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
-        query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid)
+        query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid, split=args.split)
 
 
     ######################################### TEST SET
