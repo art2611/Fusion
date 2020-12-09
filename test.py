@@ -145,7 +145,7 @@ def multi_process() :
                 sys.exit("Saved model not loaded, care")
 
             #Prepare query and gallery
-            if args.reid != "BtoB" :
+            if args.reid == "BtoB" :
                 query_img, query_img_t, query_label, gall_img, gall_img_t, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False,
