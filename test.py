@@ -84,16 +84,27 @@ def extract_gall_feat(gall_loader, ngall, net):
         test_mode = 1
     if args.reid == "BtoB" :
         test_mode = 0
-    print(f"Gallery test on mode {test_mode} supposed to be 1 if visible or 2 if thermal")
-    with torch.no_grad():
-        for batch_idx, (input, label) in enumerate(gall_loader):
-            batch_num = input.size(0)
-            input = Variable(input.cuda())
-            feat_pool, feat_fc = net(input, input, modal=test_mode)
-            gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
-            gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-            ptr = ptr + batch_num
-    print('Extracting Time:\t {:.3f}'.format(time.time() - start))
+        with torch.no_grad():
+            for batch_idx, (input1, input2, label) in enumerate(gall_loader):
+                batch_num = input1.size(0)
+                input1 = Variable(input1.cuda())
+                input2 = Variable(input2.cuda())
+                feat_pool, feat_fc = net(input1, input2, modal=test_mode)
+                gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
+        print('Extracting Time:\t {:.3f}'.format(time.time() - start))
+    else :
+        print(f"Gallery test on mode {test_mode} supposed to be 1 if visible or 2 if thermal")
+        with torch.no_grad():
+            for batch_idx, (input, label) in enumerate(gall_loader):
+                batch_num = input.size(0)
+                input = Variable(input.cuda())
+                feat_pool, feat_fc = net(input, input, modal=test_mode)
+                gall_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                gall_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
+        print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     return gall_feat_pool, gall_feat_fc
 
 
@@ -110,16 +121,28 @@ def extract_query_feat(query_loader, nquery, net):
         test_mode = 2
     if args.reid == "BtoB" :
         test_mode = 0
-    print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
-    with torch.no_grad():
-        for batch_idx, (input, label) in enumerate(query_loader):
-            batch_num = input.size(0)
-            input = Variable(input.cuda())
-            feat_pool, feat_fc = net(input, input, modal=test_mode)
-            query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
-            query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-            ptr = ptr + batch_num
-    print('Extracting Time:\t {:.3f}'.format(time.time() - start))
+        print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
+        with torch.no_grad():
+            for batch_idx, (input1, input2, label) in enumerate(query_loader):
+                batch_num = input1.size(0)
+                input1 = Variable(input1.cuda())
+                input2 = Variable(input2.cuda())
+                feat_pool, feat_fc = net(input1, input2, modal=test_mode)
+                query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
+        print('Extracting Time:\t {:.3f}'.format(time.time() - start))
+    else :
+        print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
+        with torch.no_grad():
+            for batch_idx, (input, label) in enumerate(query_loader):
+                batch_num = input.size(0)
+                input = Variable(input.cuda())
+                feat_pool, feat_fc = net(input, input, modal=test_mode)
+                query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
+        print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     return query_feat_pool, query_feat_fc
 
 def multi_process() :
@@ -150,14 +173,13 @@ def multi_process() :
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False,
                                                           num_workers=workers)
+                nquery = len(query_label)
+                ngall = len(gall_label)
+
                 queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False,
                                                            num_workers=4)
-                for batch_idx, (input1, input2, label) in enumerate(gall_loader):
-                    # print(f"input1 : {input1.shape}")
-                    # print(f"input2 : {input2.shape}")
-                    print(f"label : {label}")
-                sys.exit()
+
             else :
                 query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
@@ -172,7 +194,6 @@ def multi_process() :
                                                            num_workers=4)
 
             print('Data Loading Time:\t {:.3f}'.format(time.time() - end))
-
 
             query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery = nquery, net = net)
             gall_feat_pool,  gall_feat_fc = extract_gall_feat(gall_loader, ngall = ngall, net = net)
