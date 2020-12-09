@@ -186,7 +186,14 @@ def multi_process() :
                 queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=int(test_batch_size), shuffle=False,
                                                            num_workers=4, drop_last=True)
-
+                for batch_idx, (input1, input2, label) in enumerate(query_loader):
+                    batch_num = input1.size(0) + input2.size(0)
+                    print(batch_num)
+                    print(input1.size(0))
+                    print(input2.size(0))
+                    print(label)
+                    print(batch_idx)
+                sys.exit()
             else :
                 query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData(gall_img, gall_label, transform=transform_test, img_size=(img_w, img_h))
