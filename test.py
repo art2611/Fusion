@@ -123,8 +123,8 @@ def extract_query_feat(query_loader, nquery, net):
         test_mode = 2
     if args.reid == "BtoB" :
         test_mode = 0
-        query_feat_pool = np.zeros((nquery, pool_dim))
-        query_feat_fc = np.zeros((nquery, pool_dim))
+        query_feat_pool = np.zeros((nquery*2, pool_dim))
+        query_feat_fc = np.zeros((nquery*2, pool_dim))
         print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
         with torch.no_grad():
             for batch_idx, (input1, input2, label) in enumerate(query_loader):
