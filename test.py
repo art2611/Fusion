@@ -134,6 +134,7 @@ def extract_query_feat(query_loader, nquery, net):
                 input1 = Variable(input1.cuda())
                 input2 = Variable(input2.cuda())
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
+
                 query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
                 ptr = ptr + batch_num
@@ -178,13 +179,13 @@ def multi_process() :
                 query_img, query_img_t, query_label, gall_img, gall_img_t, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=int(test_batch_size), shuffle=False,
-                                                          num_workers=workers, drop_last=False)
+                                                          num_workers=workers, drop_last=True)
                 nquery = len(query_label)
                 ngall = len(gall_label)
 
                 queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=int(test_batch_size), shuffle=False,
-                                                           num_workers=4, drop_last=False)
+                                                           num_workers=4, drop_last=True)
 
             else :
                 query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
