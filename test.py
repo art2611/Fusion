@@ -129,7 +129,7 @@ def extract_query_feat(query_loader, nquery, net):
         with torch.no_grad():
             for batch_idx, (input1, input2, label) in enumerate(query_loader):
                 batch_num = input1.size(0) + input2.size(0)
-                print(batch_num)
+                print(f"batch num : {batch_num}")
                 print(input1.size(0))
                 print(input2.size(0))
                 print(label)
