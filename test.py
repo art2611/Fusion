@@ -179,20 +179,16 @@ def multi_process() :
                 query_img, query_img_t, query_label, gall_img, gall_img_t, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=int(test_batch_size), shuffle=False,
-                                                          num_workers=workers, drop_last=False)
+                                                          num_workers=workers, drop_last=True)
                 nquery = len(query_label)
                 ngall = len(gall_label)
 
                 queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=int(test_batch_size), shuffle=False,
-                                                           num_workers=4, drop_last=False)
-                for batch_idx, (input1, input2, label) in enumerate(query_loader):
-                    batch_num = input1.size(0) + input2.size(0)
-                    print(batch_num)
-                    print(input1.size(0))
-                    print(input2.size(0))
-                    print(label)
-                    print(batch_idx)
+                                                           num_workers=4, drop_last=True)
+
+                query_feat_pool, query_feat_fc = extract_query_feat(query_loader, nquery=nquery, net=net)
+
                 sys.exit()
             else :
                 query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=test_trial, modal=args.reid, split=args.split)
