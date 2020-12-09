@@ -134,11 +134,11 @@ def extract_query_feat(query_loader, nquery, net):
                 print(batch_idx)
                 input1 = Variable(input1.cuda())
                 input2 = Variable(input2.cuda())
-                # feat_pool, feat_fc = net(input1, input2, modal=test_mode)
-                #
-                # query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
-                # query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
-                # ptr = ptr + batch_num
+                feat_pool, feat_fc = net(input1, input2, modal=test_mode)
+
+                query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
+                query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
+                ptr = ptr + batch_num
         print('Extracting Time:\t {:.3f}'.format(time.time() - start))
     else :
         print(f"Query test on mode {test_mode} supposed to be 1 if visible or 2 if thermal" )
