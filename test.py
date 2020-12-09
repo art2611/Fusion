@@ -137,6 +137,8 @@ def extract_query_feat(query_loader, nquery, net):
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
                 print(feat_pool.shape)
                 print(feat_fc.shape)
+                print(ptr)
+                print(ptr+batch_num)
                 query_feat_pool[ptr:ptr + batch_num, :] = feat_pool.detach().cpu().numpy()
                 query_feat_fc[ptr:ptr + batch_num, :] = feat_fc.detach().cpu().numpy()
                 print(query_feat_pool)
