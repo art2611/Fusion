@@ -150,7 +150,7 @@ def multi_process() :
                 gallset = TestData_both(gall_img, gall_img_t, gall_label, transform=transform_test, img_size=(img_w, img_h))
                 gall_loader = torch.utils.data.DataLoader(gallset, batch_size=test_batch_size, shuffle=False,
                                                           num_workers=workers)
-                queryset = TestData(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
+                queryset = TestData_both(query_img, query_img_t, query_label, transform=transform_test, img_size=(img_w, img_h))
                 query_loader = torch.utils.data.DataLoader(queryset, batch_size=test_batch_size, shuffle=False,
                                                            num_workers=4)
                 for batch_idx, (input1, input2, label) in enumerate(gall_loader):
