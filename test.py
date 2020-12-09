@@ -86,7 +86,7 @@ def extract_gall_feat(gall_loader, ngall, net):
         test_mode = 0
         with torch.no_grad():
             for batch_idx, (input1, input2, label) in enumerate(gall_loader):
-                batch_num = input1.size(0)
+                batch_num = input1.size(0)*2
                 input1 = Variable(input1.cuda())
                 input2 = Variable(input2.cuda())
                 feat_pool, feat_fc = net(input1, input2, modal=test_mode)
