@@ -213,9 +213,7 @@ def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based")
                         sec_image_slice_gallery.append(file_image_visible[k * 10 + i])
                         sec_image_slice_gallery_2.append(file_image_thermal[k * 10 + i])
                         sec_label_slice_gallery.append(file_label_visible[k * 10])
-            print(f"sec_image_slice_gallery len : {len(first_image_slice_query)}")
-            print(f"sec_image_slice_gallery_2 len : {len(first_image_slice_query_2)}")
-            print(f"sec_label_slice_gallery len : {len(first_label_slice_query)}")
+
         if modal == "BtoB" :
             return (first_image_slice_query, first_image_slice_query_2, np.array(first_label_slice_query), \
                     sec_image_slice_gallery, sec_image_slice_gallery_2, np.array(sec_label_slice_gallery))
