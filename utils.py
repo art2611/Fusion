@@ -37,7 +37,6 @@ class IdentitySampler(Sampler):
     def __len__(self):
         return self.N
 
-
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 

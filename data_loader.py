@@ -178,7 +178,8 @@ def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based")
         first_label_slice_query = []
         sec_image_slice_gallery = []
         sec_label_slice_gallery = []
-
+        first_image_slice_query_2 = []
+        sec_image_slice_gallery_2 = []
         # On regarde pour chaque id
         for k in range(len(np.unique(file_label_visible))):
             appeared = []
@@ -194,6 +195,11 @@ def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based")
                 elif modal == "TtoV" :
                     first_image_slice_query.append(file_image_thermal[k * 10 + rand])
                     first_label_slice_query.append(file_label_thermal[k * 10])
+                elif modal == "BtoB" :
+                    first_image_slice_query.append(file_image_visible[k * 10 + rand])
+                    first_image_slice_query_2.append(file_image_thermal[k * 10 + rand])
+                    first_label_slice_query.append(file_label_visible[k * 10])
+
             # On regarde la liste d'images de l'id k, on récupère les images n'étant pas dans query (5 images)
             for i in [w for w in range(10)]:
                 if i not in appeared:
@@ -203,6 +209,14 @@ def process_test_regdb(img_dir, modal='visible', trial = 1, split="paper_based")
                     elif modal == "TtoV":
                         sec_image_slice_gallery.append(file_image_thermal[k * 10 + i])
                         sec_label_slice_gallery.append(file_label_thermal[k * 10])
+                    elif modal =="BtoB" :
+                        sec_image_slice_gallery.append(file_image_visible[k * 10 + i])
+                        sec_image_slice_gallery_2.append(file_image_thermal[k * 10 + i])
+                        sec_label_slice_gallery.append(file_label_visible[k * 10])
+
+        if modal == "BtoB" :
+            return (first_image_slice_query, first_image_slice_query_2, np.array(first_label_slice_query), \
+                    sec_image_slice_gallery, sec_image_slice_gallery_2, np.array(sec_label_slice_gallery))
         return (first_image_slice_query, np.array(first_label_slice_query), sec_image_slice_gallery,
                 np.array(sec_label_slice_gallery))
 
@@ -414,6 +428,38 @@ class TestData(data.Dataset):
     def __len__(self):
         return len(self.test_image)
 
+class TestData_both(data.Dataset):
+    def __init__(self, test_img_file1,test_img_file2, test_label, transform=None, img_size = (144,288)):
+
+        test_image1 = []
+        test_image2 = []
+        for i in range(len(test_img_file1)):
+            img = Image.open(test_img_file1[i])
+            img = img.resize((img_size[0], img_size[1]), Image.ANTIALIAS)
+            pix_array = np.array(img)
+            test_image1.append(pix_array)
+        for i in range(len(test_img_file2)):
+            img = Image.open(test_img_file2[i])
+            img = img.resize((img_size[0], img_size[1]), Image.ANTIALIAS)
+            pix_array = np.array(img)
+            test_image2.append(pix_array)
+        test_image1 = np.array(test_image1)
+        test_image2 = np.array(test_image2)
+
+        self.test_image1 = test_image1
+        self.test_image2 = test_image2
+        self.test_label = test_label
+        self.transform = transform
+
+    def __getitem__(self, index):
+        img1, img2, target1 = self.test_image1[index], self.test_image2[index], self.test_label[index]
+        img1 = self.transform(img1)
+        img2 = self.transform(img2)
+        return img1, img2, target1
+
+    def __len__(self):
+        #Should be the same len for both image 1 and image 2
+        return len(self.test_image1)
 
 # Print some of the images :
 # print(trainset.train_color_image.shape)
