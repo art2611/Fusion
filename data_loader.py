@@ -62,6 +62,42 @@ class RegDBData(data.Dataset):
     def __len__(self):
         return len(self.train_color_label)
 
+class RegDBData_clean(data.Dataset):
+    def __init__(self, data_dir, trial, transform=None, colorIndex=None, thermalIndex=None, fold = 0):
+        # Load training images (path) and labels
+        data_dir = '../Datasets/RegDB/'
+        #Load color and thermal images + labels
+        train_color_image = np.load( data_dir + f'train_rgb_img_{fold}.npy')
+        train_thermal_image = np.load(data_dir + f'train_ir_img_{fold}.npy')
+        train_color_label = np.load(data_dir + f'train_label_{fold}.npy')
+        train_thermal_label = np.load(data_dir + f'train_label_{fold}.npy')
+
+        # Init color images / labels
+        self.train_color_image = train_color_image
+        self.train_color_label = train_color_label
+
+        # Init themal images / labels
+        self.train_thermal_image = train_thermal_image
+        self.train_thermal_label = train_thermal_label
+
+        self.transform = transform
+
+        # Prepare index
+        self.cIndex = colorIndex
+        self.tIndex = thermalIndex
+
+    def __getitem__(self, index):
+        #Dataset[i] return images from both modal and the corresponding label
+        img1, target1 = self.train_color_image[self.cIndex[index]], self.train_color_label[self.cIndex[index]]
+        img2, target2 = self.train_thermal_image[self.tIndex[index]], self.train_thermal_label[self.tIndex[index]]
+
+        img1 = self.transform(img1)
+        img2 = self.transform(img2)
+
+        return img1, img2, target1, target2
+
+    def __len__(self):
+        return len(self.train_color_label)
 
 class SYSUData(data.Dataset):
     def __init__(self, data_dir, transform=None, colorIndex=None, thermalIndex=None):

@@ -93,6 +93,7 @@ def multi_process() :
     if args.dataset == 'sysu':
         # training set
         trainset = SYSUData(data_path, transform=transform_train)
+
         # generate the idx of each person identity
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
@@ -101,7 +102,9 @@ def multi_process() :
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
 
     elif args.dataset == 'regdb':
-        trainset = RegDBData(data_path, trial = 1, transform=transform_train)
+        trainset = RegDBData_clean(data_path, trial = 1, transform=transform_train, fold = 0)
+
+        # trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
 
