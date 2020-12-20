@@ -17,6 +17,9 @@ class IdentitySampler(Sampler):
         for j in range(int(N / (batchSize * num_pos)) + 1):
             batch_idx = np.random.choice(uni_label, batchSize, replace=False)
             for i in range(batchSize):
+                print(batchSize)
+                print(color_pos)
+                print(i)
                 sample_color = np.random.choice(color_pos[batch_idx[i]], num_pos)
                 sample_thermal = np.random.choice(thermal_pos[batch_idx[i]], num_pos)
 
