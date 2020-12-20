@@ -183,10 +183,7 @@ def multi_process() :
         end = time.time()
 
         for batch_idx, (input1, input2, label1, label2) in enumerate(trainloader):
-            print(f"Label 1 : {label1}")
-            print(f"Label 2 : {label2}")
             labels = torch.cat((label1, label2), 0)
-            print(f"Label 3 : {labels}")
 
             input1 = Variable(input1.cuda())
             input2 = Variable(input2.cuda())
@@ -200,7 +197,6 @@ def multi_process() :
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
             _, predicted = out0.max(1)
-            print(f'predicted : {predicted}')
             correct += (predicted.eq(labels).sum().item() / 2)
 
             loss = loss_ce + loss_tri
