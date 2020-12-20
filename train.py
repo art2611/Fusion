@@ -102,8 +102,8 @@ def multi_process() :
         gall_img, gall_label, gall_cam = process_gallery_sysu(data_path, "valid", mode="all", trial=0, reid=args.reid)
 
     elif args.dataset == 'regdb':
-        trainset = RegDBData_clean(data_path, trial = 1, transform=transform_train, fold = 0)
-        # trainset = RegDBData(data_path, trial = 1, transform=transform_train)
+        # trainset = RegDBData_clean(data_path, trial = 1, transform=transform_train, fold = 0)
+        trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
         print(type(trainset.train_color_label))
         print(type(trainset.train_thermal_label))
