@@ -105,8 +105,8 @@ def multi_process() :
     elif args.dataset == 'regdb':
         trainset = RegDBData_clean(data_path, trial = 1, transform=transform_train, fold = 0)
         # trainset = RegDBData(data_path, trial = 1, transform=transform_train)
-        print(trainset.train_thermal_label)
-        print(trainset.train_color_label)
+        # print(trainset.train_thermal_label)
+        # print(trainset.train_color_label)
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
         print(color_pos)
         query_img, query_label, gall_img, gall_label = process_test_regdb(data_path, trial=1, modal=args.reid, split=args.split)
