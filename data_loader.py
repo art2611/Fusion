@@ -322,7 +322,6 @@ def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, re
             img_dir = os.path.join(data_path, cam, id)
             if os.path.isdir(img_dir):
                 new_files = sorted([img_dir + '/' + i for i in os.listdir(img_dir)])
-                #
                 files_ir.extend(new_files)
 
     query_img = []
