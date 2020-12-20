@@ -302,7 +302,8 @@ def process_query_sysu(data_path, method, trial=0, mode='all', relabel=False, re
         file_path = os.path.join(data_path, 'exp/test_id.txt')
     elif method == "valid":
         print("Validation set called")
-        file_path = os.path.join(data_path, 'exp/val_id.txt')
+        file_path = os.path.join(data_path, f'exp/val_id_{0}.txt')
+        # file_path = os.path.join(data_path, 'exp/val_id.txt')
 
     files_rgb = []
     files_ir = []
