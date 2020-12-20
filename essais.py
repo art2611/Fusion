@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist
 
 
-a = [[2,0], [4,6]]
+a = [[2,0], [4,6],[0,1]]
 a = np.array(a)
 print(a)
 
