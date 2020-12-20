@@ -87,23 +87,21 @@ def read_imgs(train_image, k):
 #Output .npy files
 
 for k in range(5):
-
     # rgb imges train
     train_img = read_imgs(files_rgb_train[k], k)
     # print(train_img[0])
     np.save(data_path + f'train_rgb_img_{k}.npy', train_img)
-    np.save(data_path +  f'train_rgb_label_{k}.npy', np.array(file_label))
+    np.save(data_path +  f'train_rgb_label_{k}.npy', np.array(training_lists[k]))
 
     # ir imges train
     train_img  = read_imgs(files_ir_train[k], k)
     np.save(data_path +  f'train_ir_img_{k}.npy', train_img)
-    np.save(data_path + f'train_ir_label_{k}.npy',np.array(file_label))
+
 
     train_img = read_imgs(files_rgb_val[k], k)
     np.save(data_path + f'valid_rgb_img_{k}.npy', train_img)
-    np.save(data_path + f'valid_rgb_label_{k}.npy', np.array(file_label))
+    np.save(data_path + f'valid_rgb_label_{k}.npy', np.array(val_lists[k]))
 
     # ir imges valid
     train_img = read_imgs(files_ir_val[k], k)
     np.save(data_path + f'valid_ir_img_{k}.npy', train_img)
-    np.save(data_path + f'valid_ir_label_{k}.npy', np.array(file_label))
