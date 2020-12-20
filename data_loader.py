@@ -70,7 +70,8 @@ class RegDBData_clean(data.Dataset):
         train_color_image = np.load( data_dir + f'train_rgb_img_{fold}.npy')
         train_thermal_image = np.load(data_dir + f'train_ir_img_{fold}.npy')
         train_color_label = np.load(data_dir + f'train_label_{fold}.npy')
-        train_thermal_label = np.load(data_dir + f'train_label_{fold}.npy')
+        train_color_label = train_color_label.tolist()
+        train_thermal_label = train_color_label
 
         # Init color images / labels
         self.train_color_image = train_color_image
