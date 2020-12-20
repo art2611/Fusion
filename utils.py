@@ -11,6 +11,7 @@ class IdentitySampler(Sampler):
 
     def __init__(self, train_color_label, train_thermal_label, color_pos, thermal_pos, num_pos, batchSize, epoch):
         uni_label = np.unique(train_color_label)
+        print(uni_label)
         self.n_classes = len(uni_label)
         N = np.maximum(len(train_color_label), len(train_thermal_label))
         for j in range(int(N / (batchSize * num_pos)) + 1):
