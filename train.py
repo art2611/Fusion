@@ -105,8 +105,8 @@ def multi_process() :
         # trainset = RegDBData_clean(data_path, trial = 1, transform=transform_train, fold = 0)
         trainset = RegDBData(data_path, trial = 1, transform=transform_train)
 
-        print(trainset.train_color_label)
-        print(trainset.train_thermal_label)
+        print(len(trainset.train_color_label))
+        print(len(trainset.train_thermal_label))
         # print(trainset.train_color_image)
         # print(trainset.train_thermal_image)
 
