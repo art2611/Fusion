@@ -1,9 +1,6 @@
 import numpy as np
 from PIL import Image
-import pdb
 import os
-
-import sys
 
 data_path = '../Datasets/RegDB/'
 
