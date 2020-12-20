@@ -100,6 +100,35 @@ class RegDBData_clean(data.Dataset):
     def __len__(self):
         return len(self.train_color_label)
 
+class SYSUData_clean(data.Dataset):
+    def __init__(self, data_dir, transform=None, colorIndex=None, thermalIndex=None, fold = 0):
+        data_dir = '../Datasets/SYSU/'
+        # Load training images (path) and labels
+        train_color_image = np.load(data_dir + f'train_rgb_img_{fold}.npy')
+        self.train_color_label = np.load(data_dir + f'train_rgb_label_{fold}.npy')
+
+        train_thermal_image = np.load(data_dir + f'train_ir_img_{fold}.npy')
+        self.train_thermal_label = np.load(data_dir + f'train_ir_label_{fold}.npy')
+
+        # BGR to RGB
+        self.train_color_image = train_color_image
+        self.train_thermal_image = train_thermal_image
+        self.transform = transform
+        self.cIndex = colorIndex
+        self.tIndex = thermalIndex
+
+    def __getitem__(self, index):
+        img1, target1 = self.train_color_image[self.cIndex[index]], self.train_color_label[self.cIndex[index]]
+        img2, target2 = self.train_thermal_image[self.tIndex[index]], self.train_thermal_label[self.tIndex[index]]
+
+        img1 = self.transform(img1)
+        img2 = self.transform(img2)
+
+        return img1, img2, target1, target2
+
+    def __len__(self):
+        return len(self.train_color_label)
+
 class SYSUData(data.Dataset):
     def __init__(self, data_dir, transform=None, colorIndex=None, thermalIndex=None):
         data_dir = '../Datasets/SYSU/'
