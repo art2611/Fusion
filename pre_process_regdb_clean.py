@@ -91,7 +91,7 @@ for k in range(5):
     train_img = read_imgs(files_rgb_train[k], k)
     # print(train_img[0])
     np.save(data_path + f'train_rgb_img_{k}.npy', train_img)
-    np.save(data_path +  f'train_rgb_label_{k}.npy', np.array(training_lists[k]))
+    np.save(data_path +  f'train_label_{k}.npy', np.array(training_lists[k]))
 
     # ir imges train
     train_img  = read_imgs(files_ir_train[k], k)
@@ -100,7 +100,7 @@ for k in range(5):
 
     train_img = read_imgs(files_rgb_val[k], k)
     np.save(data_path + f'valid_rgb_img_{k}.npy', train_img)
-    np.save(data_path + f'valid_rgb_label_{k}.npy', np.array(val_lists[k]))
+    np.save(data_path + f'valid_label_{k}.npy', np.array(val_lists[k]))
 
     # ir imges valid
     train_img = read_imgs(files_ir_val[k], k)
