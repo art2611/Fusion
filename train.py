@@ -93,8 +93,8 @@ def multi_process() :
     if args.dataset == 'sysu':
         # training set
         SYSUData_clean
-        trainset = SYSUData_clean(data_path, transform=transform_train, fold = 0)
-        # trainset = SYSUData(data_path, transform=transform_train)
+        #trainset = SYSUData_clean(data_path, transform=transform_train, fold = 0)
+        trainset = SYSUData(data_path, transform=transform_train)
 
         # generate the idx of each person identity
         color_pos, thermal_pos = GenIdx(trainset.train_color_label, trainset.train_thermal_label)
