@@ -148,7 +148,6 @@ def multi_process() :
 
     ######################################### TRAINING
     print('==> Start Training...')
-
     #Train function
     ignored_params = list(map(id, net.bottleneck.parameters())) \
                      + list(map(id, net.fc.parameters()))
@@ -241,7 +240,6 @@ def multi_process() :
             cmc_att, mAP_att, mINP_att  = eval_regdb(-distmat_fc, query_label, gall_label)
 
         elif args.dataset == 'sysu':
-
             cmc, mAP, mINP = eval_sysu(-distmat_pool, query_label, gall_label, query_cam, gall_cam)
             cmc_att, mAP_att, mINP_att = eval_sysu(-distmat_fc, query_label, gall_label, query_cam, gall_cam)
 
@@ -266,7 +264,7 @@ def multi_process() :
         sampler = IdentitySampler(trainset.train_color_label, \
                                   trainset.train_thermal_label, color_pos, thermal_pos, num_of_same_id_in_batch, batch_num_identities,
                                   epoch)
-        print("COUCOU")
+
         trainset.cIndex = sampler.index1  # color index
         trainset.tIndex = sampler.index2  # thermal index
         # print(epoch)
