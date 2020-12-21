@@ -190,6 +190,7 @@ def multi_process() :
             # print(feat)
             print("FLAAAAAG")
             print(labels)
+            sys.exit()
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
             _, predicted = out0.max(1)
