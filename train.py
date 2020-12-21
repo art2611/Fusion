@@ -186,7 +186,7 @@ def multi_process() :
 
             feat, out0, = net(input1, input2)
             print("FLAAAAAG")
-            print(feat.shape())
+            print(feat.shape)
             print(out0.shape)
             sys.exit()
             loss_ce = criterion_id(out0, labels)
