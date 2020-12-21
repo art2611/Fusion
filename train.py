@@ -185,14 +185,14 @@ def multi_process() :
             data_time.update(time.time() - end)
 
             feat, out0, = net(input1, input2)
+
+            loss_ce = criterion_id(out0, labels)
+            # print(feat)
             print("FLAAAAAG")
             print(feat.shape)
             print(out0.shape)
             print(labels.shape)
             sys.exit()
-            loss_ce = criterion_id(out0, labels)
-            # print(feat)
-
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
             _, predicted = out0.max(1)
