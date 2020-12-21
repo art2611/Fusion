@@ -188,6 +188,7 @@ def multi_process() :
 
             loss_ce = criterion_id(out0, labels)
             # print(feat)
+            print("FLAAAAAG")
             print(labels)
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
