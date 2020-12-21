@@ -185,7 +185,8 @@ def multi_process() :
             data_time.update(time.time() - end)
 
             feat, out0, = net(input1, input2)
-
+            print(feat)
+            print(out0)
             loss_ce = criterion_id(out0, labels)
             # print(feat)
             print("FLAAAAAG")
