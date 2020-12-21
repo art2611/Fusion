@@ -187,6 +187,8 @@ def multi_process() :
             feat, out0, = net(input1, input2)
 
             loss_ce = criterion_id(out0, labels)
+            # print(feat)
+            print(labels)
             loss_tri, batch_acc = criterion_tri(feat, labels)
             correct += (batch_acc / 2)
             _, predicted = out0.max(1)
